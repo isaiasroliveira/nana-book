@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Separate book catalog integration from HTTP handling and share the search result type with the reader interface.
 - Refresh the default reading surface with a cool palette and more direct diary copy.
 - Restore Fraunces for headings and use Bricolage Grotesque for interface text.
 - Add reader-selectable light and dark color palettes, explore Bricolage Grotesque in headings and navigation, and refine book cover shadows.
@@ -17,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Keep the landing illustration visible behind the header across appearance palettes.
 - Preserve readable heading and navigation colors over the light illustration in dark mode.
+- Reject malformed catalog response envelopes instead of treating them as empty search results.
 - Preserve the font import URL when formatting global styles.
 - Align book authors and ratings across each row of the reading shelf.
 - Pin direct dependency versions and document runtime activation and the verification command.
