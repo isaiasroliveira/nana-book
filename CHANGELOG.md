@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Keep the landing illustration visible behind the header across appearance palettes.
+- Preserve readable heading and navigation colors over the light illustration in dark mode.
 - Preserve the font import URL when formatting global styles.
 - Align book authors and ratings across each row of the reading shelf.
 - Pin direct dependency versions and document runtime activation and the verification command.

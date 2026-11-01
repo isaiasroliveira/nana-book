@@ -59,6 +59,20 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await page("Page.navigate", { url: process.env.TEST_BASE_URL || "http://localhost:3000" });
     await waitFor("!!document.querySelector('summary')");
     await new Promise(resolve => setTimeout(resolve, 500));
+    for (const width of [390, 768, 1440]) {
+      await page("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
+      for (const palette of ["", "petrol", "sage", "rose"]) {
+        for (const mode of ["light", "dark"]) {
+          await evaluate(`Object.assign(document.documentElement.dataset, ${JSON.stringify({ palette, mode })})`);
+          assert.equal(await evaluate("getComputedStyle(document.querySelector('.top')).backgroundColor"), "rgba(0, 0, 0, 0)", `${width}: ${palette || "original"} ${mode}`);
+          assert.match(await evaluate("getComputedStyle(document.querySelector('.landing-art')).backgroundImage"), /nana-books-hero\.jpg/);
+          for (const selector of [".hero .heading", ".brand", ".appearance-settings summary", ".nav .active"]) {
+            assert.equal(await evaluate(`getComputedStyle(document.querySelector(${JSON.stringify(selector)})).color`), "rgb(36, 59, 58)", `${palette} ${mode}: ${selector}`);
+          }
+        }
+      }
+    }
+    await evaluate("delete document.documentElement.dataset.palette; delete document.documentElement.dataset.mode");
     await evaluate("document.querySelector('summary').focus()");
     await key("Enter", "Enter", 13);
     assert.equal(await evaluate("document.querySelector('details').open"), true);
