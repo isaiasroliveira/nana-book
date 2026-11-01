@@ -1,0 +1,13 @@
+.agents
+.agents/*
+node_modules/
+.next/
+*.tsbuildinfo
+.env*
+!.env.example
+.DS_Store
+
+.pnpm-store/
+
+.corepack-cache/
+graphify-out/

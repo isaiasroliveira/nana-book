@@ -1,0 +1,30 @@
+{
+  "name": "nana-books",
+  "private": true,
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=26.13.0 <27"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "verify": "pnpm test && pnpm typecheck && pnpm build",
+    "test": "tsx --test tests/*.test.tsx",
+    "test:browser": "node --test --test-timeout=45000 tests/browser/*.test.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "1.63.0",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}
