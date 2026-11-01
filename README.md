@@ -46,6 +46,8 @@ Run `pnpm test` to check component behavior. `pnpm verify` also runs the tests b
 
 ## Experimental book search
 
-Set `GOOGLE_BOOKS_API_KEY` in `.env.local` using a Google Cloud project with the Books API enabled. This is a server-only credential. Restart the application after changing environment variables. Searches are not persisted and responses are not cached. Current results include edition metadata and source attribution; saving readings and displaying provider covers are outside this slice.
+Book search uses [Google Books](https://developers.google.com/books/docs/v1/using). Set `GOOGLE_BOOKS_API_KEY` in `.env.local` using a Google Cloud project with the Books API enabled, and restart the application. The key is used only on the server. Remove the obsolete `OPEN_LIBRARY_CONTACT_EMAIL` setting.
+
+Searches support titles, authors and ISBNs. Results identify Google Books and include available edition metadata. Searches are not persisted and responses are not cached; saving readings and displaying provider covers are outside this slice. Google applies project quotas; check the Books API quota page in Google Cloud Console for current limits and usage.
 
 Search endpoint tests mock external HTTP responses. Browser checks cover success and provider-error feedback; these checks do not establish live provider coverage or quotas.

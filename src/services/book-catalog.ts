@@ -19,9 +19,9 @@ export async function searchBooks(query: string): Promise<BookResult[]> {
   url.searchParams.set("q", /^(\d{13}|\d{9}[\dXx])$/.test(isbn) ? `isbn:${isbn}` : query);
   url.searchParams.set("printType", "books");
   url.searchParams.set("maxResults", "12");
-  if (process.env.GOOGLE_BOOKS_API_KEY) {
-    url.searchParams.set("key", process.env.GOOGLE_BOOKS_API_KEY);
-  }
+  if (!process.env.GOOGLE_BOOKS_API_KEY) throw new Error("Google Books API key is not configured");
+  url.searchParams.set("key", process.env.GOOGLE_BOOKS_API_KEY);
+  url.searchParams.set("hl", "pt-BR");
 
   const response = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(8000) });
   if (!response.ok) throw new Error("Book provider unavailable");

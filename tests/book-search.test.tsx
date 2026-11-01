@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { afterEach, beforeEach, test } from "node:test";
 import { GET } from "../src/app/api/books/route";
+
+const originalKey = process.env.GOOGLE_BOOKS_API_KEY;
+beforeEach(() => { process.env.GOOGLE_BOOKS_API_KEY = "test-key"; });
+afterEach(() => { if (originalKey === undefined) delete process.env.GOOGLE_BOOKS_API_KEY; else process.env.GOOGLE_BOOKS_API_KEY = originalKey; });
 
 test("search rejects an empty query", async () => {
   const response = await GET(new Request("http://localhost/api/books?q="));
@@ -8,7 +12,11 @@ test("search rejects an empty query", async () => {
 });
 
 test("search exposes edition metadata and source", async (context) => {
-  context.mock.method(globalThis, "fetch", async () => Response.json({ items: [{ id: "volume-1", volumeInfo: { title: "Torto arado", authors: ["Itamar Vieira Junior"], publisher: "Todavia", publishedDate: "2019", language: "pt", industryIdentifiers: [{ type: "ISBN_13", identifier: "9786580309313" }] } }] }));
+  context.mock.method(globalThis, "fetch", async (url: URL) => {
+    assert.equal(url.hostname, "www.googleapis.com");
+    assert.equal(url.searchParams.get("key"), "test-key");
+    return Response.json({ items: [{ id: "volume-1", volumeInfo: { title: "Torto arado", authors: ["Itamar Vieira Junior"], publisher: "Todavia", publishedDate: "2019", language: "pt", industryIdentifiers: [{ type: "ISBN_13", identifier: "9786580309313" }] } }] });
+  });
   const response = await GET(new Request("http://localhost/api/books?q=Torto%20arado"));
   assert.deepEqual(await response.json(), { books: [{ id: "volume-1", source: "Google Books", title: "Torto arado", authors: ["Itamar Vieira Junior"], publisher: "Todavia", publishedDate: "2019", language: "pt", isbn: "9786580309313" }] });
 });
@@ -70,4 +78,11 @@ test("ISBN search preserves the edition identifier", async (context) => {
     return Response.json({ items: [] });
   });
   assert.equal((await GET(new Request("http://localhost/api/books?q=978-65-80309-31-3"))).status, 200);
+});
+
+test("search fails safely if the API key is missing", async (context) => {
+  delete process.env.GOOGLE_BOOKS_API_KEY;
+  context.mock.method(globalThis, "fetch", async () => { assert.fail("Missing credentials must not reach the provider"); });
+  const response = await GET(new Request("http://localhost/api/books?q=livro"));
+  assert.equal(response.status, 502);
 });

@@ -72,6 +72,18 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
         }
       }
     }
+    await evaluate(`window.fetch = async (url) => {
+      if (!String(url).startsWith('/api/books?q=')) throw new Error('Unexpected search URL');
+      return Response.json({ books: [{ id: 'volume-1', source: 'Google Books', title: 'Torto Arado', authors: ['Itamar Vieira Junior'], isbn: '9786580309313' }] });
+    }`);
+    await evaluate("document.querySelector('#book-query').value = 'Torto arado'; document.querySelector('.search-form').requestSubmit()");
+    await waitFor("document.querySelector('.search-results').textContent.includes('Fonte: Google Books')");
+    assert.match(await evaluate("document.querySelector('.search-results').textContent"), /Torto Arado.*Itamar Vieira Junior.*9786580309313/);
+    await evaluate("window.fetch = async () => Response.json({ error: 'Não foi possível consultar os livros. Tente novamente.' }, { status: 502 })");
+    await waitFor("!document.querySelector('.search-form button').disabled");
+    await evaluate("document.querySelector('.search-form').requestSubmit()");
+    await waitFor("document.querySelector('[role=status]').textContent.includes('Não foi possível consultar os livros')");
+    assert.equal(await evaluate("document.querySelector('.search-results').children.length"), 0);
     await evaluate("delete document.documentElement.dataset.palette; delete document.documentElement.dataset.mode");
     await evaluate("document.querySelector('summary').focus()");
     await key("Enter", "Enter", 13);

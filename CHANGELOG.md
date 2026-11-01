@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Require a server-side Google Books API key for book searches.
+
 - Separate book catalog integration from HTTP handling and share the search result type with the reader interface.
 - Refresh the default reading surface with a cool palette and more direct diary copy.
 - Restore Fraunces for headings and use Bricolage Grotesque for interface text.

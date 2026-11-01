@@ -8,7 +8,7 @@ Readers need to find the correct book and edition before recording a reading or 
 
 ## Solution
 
-Provide an experimental title, author and ISBN search that compares Google Books and Open Library results, identifies each source, and displays available edition metadata without creating a permanent catalog.
+Provide title, author and ISBN search through Google Books, identify the source, and display available edition metadata without creating a permanent catalog. The latest provider choice supersedes the earlier provider comparison.
 
 ## User stories
 
@@ -16,9 +16,9 @@ Provide an experimental title, author and ISBN search that compares Google Books
 2. As a reader, I want to search by author so that I can find their books.
 3. As a reader, I want to search by ISBN so that I can identify an edition.
 4. As a reader, I want to see author, language, publisher and publication date when available so that I can distinguish editions.
-5. As a reader, I want to know which source returned a result so that I can compare catalog coverage.
+5. As a reader, I want to know which source returned a result so that I know where the metadata came from.
 6. As a reader, I want clear loading, empty and error states so that I know whether to retry.
-7. As a reader, I want useful results from one provider when another fails so that a partial outage does not block discovery.
+7. As a reader, I want a clear error when the catalog is unavailable so that I know when to retry.
 
 ## Implementation decisions
 
@@ -44,14 +44,35 @@ Authentication, persistent reading records, ratings submission, bulk ingestion, 
 
 ## Further notes
 
-Compare representative Brazilian titles before selecting a primary provider. Store catalog provenance in future persistent records. The current app predates this PRD and must not be presented as having been built test-first.
+Google Books is the selected provider; continue checking representative Brazilian titles to assess coverage. Store catalog provenance in future persistent records. The current app predates this PRD and must not be presented as having been built test-first.
 
 ## Discovery notes
 
 The reader journey starts with finding the correct book and edition. Present title, authors and available edition metadata clearly, preserve source identifiers, and distinguish empty results from upstream failure. Research-informed proposals for later reading and sharing flows are recorded in [product discovery](../PRODUCT_DISCOVERY.md); they do not expand this PRD's approved scope.
 
+## Approved amendment: adopt Open Library
+
+Status: provider choice, revised ticket scope and public test boundaries approved on 2026-11-01.
+
+- Replace Google Books with Open Library as the sole search provider, with no API key requirement.
+- Preserve title, author and ISBN search through the existing public HTTP endpoint and reader interface.
+- Return edition identifiers and available edition metadata from the same edition; never combine ISBN, language, publisher or date from unrelated editions of a work.
+- Prefer Portuguese editions without excluding other languages. Preserve validation, timeouts, source attribution and empty/error states.
+- Respect the provider's published request limits and identify the application. Document any contact configuration required for identified requests.
+- Deliver one vertical ticket, with no blockers: replace the provider, adapt fixtures, remove Google credential setup, and update architecture, setup documentation and changelog.
+- Test through the public search HTTP endpoint: title/author/ISBN requests, edition consistency, missing/invalid metadata, empty results, upstream failures and request limiting. Demonstrate a failing test before implementation.
+- Verify the existing browser search flow with Open Library attribution. Live coverage checks are a small sample, not a guarantee of Brazilian catalog completeness.
+- Exclude provider comparison, Google fallback, persistence, cover display and new dependencies.
+
+## Amendment: use Google Books
+
+The user selected Google Books as the sole provider after reviewing Open Library coverage and the Google Cloud project quota. Preserve the existing reader flow and approved endpoint and browser test boundaries. Use a server-side API key; keep persistence and cover display out of scope. One vertical ticket covers the provider switch, tests and documentation.
+
 ## Tracking
 
+- Google Books provider: https://github.com/isaiasroliveira/nana-books/issues/18
+
+- Provider adoption: https://github.com/isaiasroliveira/nana-books/issues/16
 - PRD: https://github.com/isaiasroliveira/nana-books/issues/4
 - First implementation ticket: https://github.com/isaiasroliveira/nana-books/issues/5
 - Second implementation ticket: https://github.com/isaiasroliveira/nana-books/issues/6
