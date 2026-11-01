@@ -67,7 +67,7 @@
    --action-text:#3b202a;
    color-scheme:dark;
 }
-[data-palette] .top, [data-palette] .search-controls input  {
+[data-palette] .search-controls input  {
    background:var(--surface);
 }
 [data-palette] .hero-card  {
@@ -78,6 +78,13 @@
 }
 [data-palette] .nav  {
    color:var(--muted);
+}
+/* The illustration stays light in every appearance mode. */
+.top .brand, .top .nav .active, .top .appearance-settings summary, .hero .heading {
+   color:#243b3a;
+}
+.top .nav, [data-palette] .top .nav, .hero .sub {
+   color:#526967;
 }
 [data-palette] .button, [data-palette] .avatar  {
    background:var(--action);
