@@ -2,8 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
-
-type BookResult = { id: string; source: string; title: string; authors: string[]; isbn?: string; publisher?: string; language?: string; publishedDate?: string };
+import type { BookResult } from "@/services/book-catalog";
 
 export function BookSearch() {
   const [books, setBooks] = useState<BookResult[]>([]);

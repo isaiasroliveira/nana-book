@@ -20,10 +20,42 @@ test("search reports provider failures", async (context) => {
   assert.deepEqual(await response.json(), { error: "Não foi possível consultar os livros. Tente novamente." });
 });
 
+test("search reports provider HTTP errors and invalid JSON", async (context) => {
+  for (const providerResponse of [new Response(null, { status: 429 }), new Response("invalid JSON")]) {
+    context.mock.method(globalThis, "fetch", async () => providerResponse);
+    const response = await GET(new Request("http://localhost/api/books?q=livro"));
+    assert.equal(response.status, 502);
+    assert.equal(response.headers.get("Cache-Control"), "no-store");
+    assert.deepEqual(await response.json(), { error: "Não foi possível consultar os livros. Tente novamente." });
+  }
+});
+
 test("search returns an empty list when no books match", async (context) => {
   context.mock.method(globalThis, "fetch", async () => Response.json({ totalItems: 0 }));
   const response = await GET(new Request("http://localhost/api/books?q=inexistente"));
   assert.deepEqual(await response.json(), { books: [] });
+});
+
+test("search rejects malformed provider response envelopes", async (context) => {
+  for (const payload of [null, [], "invalid", 42, { items: {} }]) {
+    context.mock.method(globalThis, "fetch", async () => Response.json(payload));
+    const response = await GET(new Request("http://localhost/api/books?q=livro"));
+    assert.equal(response.status, 502, JSON.stringify(payload));
+    assert.deepEqual(await response.json(), { error: "Não foi possível consultar os livros. Tente novamente." });
+  }
+});
+
+test("search skips invalid editions and filters optional metadata", async (context) => {
+  context.mock.method(globalThis, "fetch", async () => Response.json({ items: [
+    null, {}, { id: "missing-title", volumeInfo: {} },
+    { id: "volume-1", volumeInfo: { title: "Livro", authors: ["Autora", null, 3], publisher: 42,
+      industryIdentifiers: [null, { type: "ISBN_10", identifier: "123456789X" }] } },
+  ] }));
+  const response = await GET(new Request("http://localhost/api/books?q=livro"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { books: [
+    { id: "volume-1", source: "Google Books", title: "Livro", authors: ["Autora"], isbn: "123456789X" },
+  ] });
 });
 
 test("search rejects oversized queries without consulting the provider", async (context) => {
