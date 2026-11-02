@@ -42,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Present reading impressions as open editorial text beside the book, improve text hierarchy and spacing, and reduce decorative shadows.
 - Extend shared Fluid Functionalism buttons and loading states to account, password recovery, review saving and diary pagination; align form fields and appearance touch targets.
 - Adopt Tailwind CSS, shadcn/ui and Fluid Functionalism for search controls and navigation hover, with reduced motion support.
 - Tighten shelf metadata spacing and add Playwright for visual browser checks.

@@ -65,6 +65,7 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     assert.equal(await evaluate("document.querySelector('.nav a[href=\"/\"]').hasAttribute('aria-current')"), false);
     assert.equal(await evaluate("!!document.querySelector('.featured-cover img[alt]')"), true);
     assert.equal(await evaluate("document.querySelector('#search-heading').textContent"), "Avaliar um livro");
+    assert.ok(await evaluate("parseFloat(getComputedStyle(document.body).fontSize) >= 16"), "reading text uses at least 16px");
 
     assert.match(await evaluate("document.querySelector('.brand img').getAttribute('src')"), /nana-book/);
     assert.ok(await evaluate("!!document.querySelector('link[rel=icon]')"));
@@ -124,7 +125,9 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     assert.equal(await evaluate("document.documentElement.dataset.palette"), undefined);
     assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(255, 255, 255)");
     await waitFor("!!document.querySelector('.hero-card')");
-    assert.equal(await evaluate("getComputedStyle(document.querySelector('.hero-card')).backgroundColor"), "rgb(245, 237, 206)");
+    for (const selector of [".hero-card", ".diary-note"]) {
+      assert.equal(await evaluate(`getComputedStyle(document.querySelector('${selector}')).backgroundColor`), "rgba(0, 0, 0, 0)", "reading impressions sit directly on the page");
+    }
     await page("Network.enable");
     await page("Network.setBlockedURLs", { urls: ["*/_next/static/chunks/*.js*", "*/_next/static/chunks/**/*.js*"] });
     await page("Page.reload");

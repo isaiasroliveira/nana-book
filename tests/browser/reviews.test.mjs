@@ -65,7 +65,7 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
         if (url.pathname === '/api/auth/sign-up/email') return Response.json({ user: { id: 'new-reader', email: 'reader@example.test', name: 'Reader' }, token: null });
         if (url.pathname === '/api/auth/email-otp/send-verification-otp') { window.codeRequests = (window.codeRequests || 0) + 1; return Response.json({ success: true }); }
         if (url.pathname === '/api/auth/email-otp/verify-email') return window.rejectCode ? Response.json({ message: 'Invalid code', code: 'INVALID_OTP' }, { status: 400 }) : Response.json({ status: true, token: null, user: { id: 'new-reader', email: 'reader@example.test', emailVerified: true } });
-        if (url.pathname === '/api/session') return Response.json({ user: { id: window.sessionReader || 'reader-1', name: 'Marina', email: 'reader@example.test' } });
+        if (url.pathname === '/api/session') return Response.json({ user: { id: window.sessionReader || 'reader-1', name: 'Ana', email: 'reader@example.test' } });
         if (url.pathname === '/api/books') return Response.json({ books: [book] });
         if (url.pathname === '/api/reviews') {
           const reviews = window.sessionReader === 'reader-2' ? [] : JSON.parse(localStorage.getItem('review-fixture') || '[]');
@@ -131,6 +131,7 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
     await evaluate("document.querySelector('.review-form').requestSubmit()");
     await waitFor("document.querySelector('.diary-readings')?.innerText.includes('Torto Arado')");
     await waitFor("document.querySelector('[aria-label=\"Última leitura avaliada\"]')?.textContent.includes('Torto Arado')");
+    assert.match(await evaluate("document.querySelector('[aria-label=\"Última leitura avaliada\"]').textContent"), /Ana avaliou este livro/, "featured evaluation identifies the signed-in reviewer");
     assert.equal(await evaluate("!!document.querySelector('[aria-label=\"Última leitura avaliada\"] [aria-label=\"4,5 de 5 estrelas\"]')"), true);
     assert.match(await evaluate("document.querySelector('[aria-label=\"Última leitura avaliada\"]').textContent"), /ainda não escreveu uma opinião/);
     assert.equal(await evaluate("!!document.querySelector('#review-editor a[href=\"#readings\"]')"), true, "saving offers a path to the diary");

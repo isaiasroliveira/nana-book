@@ -131,7 +131,7 @@ export function Diary() {
     <>
       <div className="reading-intro">
         <section className="hero" aria-labelledby="welcome-heading">
-          <h1 className="heading" id="welcome-heading">Seu canto<br />de leitura.</h1>
+          <h1 className="heading text-balance" id="welcome-heading">Seu canto<br />de leitura.</h1>
           <p className="sub">Guarde sua opinião sobre os livros que leu.</p>
         </section>
         <BookSearch onSelect={book => { setAccountChanged(false); setSelection({ book }); }} />
@@ -149,17 +149,17 @@ export function Diary() {
       }} />}
       {user && reviews[0] && <article className="hero-card" aria-label="Última leitura avaliada">
         <div className="featured-cover"><BookCover book={{ title: reviews[0].book?.title ?? "Edição indisponível no catálogo", author: reviews[0].book?.authors.join(", ") ?? "", coverUrl: reviews[0].book?.coverUrl, color: "#52675d", art: "" }} /></div>
-        <div className="featured-details">
-          <p className="reading-label">Na mesa de cabeceira</p>
-          <h2>{reviews[0].book?.title ?? "Edição indisponível no catálogo"}</h2>
-          <p className="sub">{reviews[0].book?.authors.join(", ") || "Autoria indisponível"}</p>
-          <a className="shelf-link" href="#readings">Ir para minha estante</a>
+        <div className="featured-body">
+          <div className="featured-details">
+            <p className="reading-label">Sua última avaliação</p>
+            <h2>{reviews[0].book?.title ?? "Edição indisponível no catálogo"}</h2>
+            <p className="sub">{reviews[0].book?.authors.join(", ") || "Autoria indisponível"}</p>
+          </div>
+          <aside className="diary-note" aria-label="Sua nota de leitura">
+            <div className="review-byline"><span>{user.name} avaliou este livro</span><Rating value={reviews[0].ratingUnits / 2} /></div>
+            {reviews[0].containsSpoilers ? <p>Esta opinião contém spoilers.</p> : reviews[0].opinion ? <blockquote>{reviews[0].opinion.length > 180 ? `${reviews[0].opinion.slice(0, 180).trimEnd()}…` : reviews[0].opinion}</blockquote> : <p>Você ainda não escreveu uma opinião.</p>}
+          </aside>
         </div>
-        <aside className="diary-note" aria-label="Sua nota de leitura">
-          <span>Uma nota para lembrar</span>
-          {reviews[0].containsSpoilers ? <p>Esta opinião contém spoilers.</p> : reviews[0].opinion ? <blockquote>{reviews[0].opinion.length > 180 ? `${reviews[0].opinion.slice(0, 180).trimEnd()}…` : reviews[0].opinion}</blockquote> : <p>Você ainda não escreveu uma opinião.</p>}
-          <Rating value={reviews[0].ratingUnits / 2} />
-        </aside>
       </article>}
       {user && <section id="readings" aria-labelledby="readings-heading">
         <div className="section-head"><h2 id="readings-heading">Livros que ficam</h2><span className="book-author">Seu diário privado</span></div>
@@ -190,18 +190,17 @@ export function Diary() {
       {user === null && <>
         <article className="hero-card" aria-label="Leitura em destaque de demonstração">
           <div className="featured-cover"><BookCover book={latestBook} /></div>
-          <div className="featured-details">
-            <p className="reading-label">Na mesa de cabeceira</p>
-            <h2>{latestBook.title}</h2>
-            <p className="sub">{latestBook.author}</p>
-            <a className="shelf-link" href="#readings">Ir para minha estante</a>
+          <div className="featured-body">
+            <div className="featured-details">
+              <p className="reading-label">Avaliação demonstrativa</p>
+              <h2>{latestBook.title}</h2>
+              <p className="sub">{latestBook.author}</p>
+            </div>
+            <aside className="diary-note" aria-label="Nota de leitura demonstrativa">
+              <div className="review-byline"><span>Marina avaliou este livro</span><Rating value={latestBook.rating} /></div>
+              <blockquote>“Uma história que continua comigo depois da última página.”</blockquote>
+            </aside>
           </div>
-          <aside className="diary-note" aria-label="Nota de leitura demonstrativa">
-            <span>Uma nota para lembrar</span>
-            <blockquote>“Uma história que continua comigo depois da última página.”</blockquote>
-            <Rating value={latestBook.rating} />
-            <small>Marina, nesta prévia</small>
-          </aside>
         </article>
         <section id="readings" aria-labelledby="readings-heading">
           <div className="section-head"><h2 id="readings-heading">Livros que ficam</h2><span className="book-author">Da sua estante</span></div>
