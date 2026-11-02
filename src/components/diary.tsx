@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BookCover } from "./book-cover";
 import { BookSearch } from "./book-search";
 import { Rating } from "./rating";
+import { Button } from "./ui/button";
 import { ReviewEditor, type Review } from "./review-editor";
 import type { BookResult } from "@/services/book-catalog";
 
@@ -184,7 +185,7 @@ export function Diary() {
         </div>
         {loading && <p role="status" className="sub">Carregando suas avaliações…</p>}
         {error && <div><p role="alert">{error}</p><button type="button" className="text-button" disabled={loading} onClick={() => { void loadReviews(retryCursor); }}>Tentar novamente</button></div>}
-        {nextCursor && !error && <button type="button" className="button" disabled={loading} onClick={() => { void loadReviews(nextCursor); }}>Carregar mais</button>}
+        {nextCursor && !error && <Button type="button" className="diary-action" loading={loading} onClick={() => { void loadReviews(nextCursor); }}>Carregar mais</Button>}
       </section>}
       {user === null && <>
         <article className="hero-card" aria-label="Leitura em destaque de demonstração">

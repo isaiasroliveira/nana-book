@@ -25,6 +25,10 @@ Use Bricolage Grotesque for navigation, headings and controls. Fraunces regular 
 
 Yellow identifies actions and the selected navigation item. The mascot appears prominently once in the header. The cream note is the one contrasting material. Real cover colors supply visual variety. No decorative statistics, progress bars or repeated card containers.
 
+Liquid glass belongs only on fixed navigation that overlays scrolling content: the desktop header and mobile bottom bar. Keep search and reading content on clear, solid surfaces. Respect reduced-transparency preferences and use opaque navigation when backdrop filtering is unavailable.
+
+Use Tailwind CSS and shadcn/ui with the Radix flavor of Fluid Functionalism for shared controls. Navigation uses one moving hover highlight; search buttons preserve their label while loading. Map interaction colors to the existing appearance tokens and honor reduced motion through the root MotionConfig. Keep the existing fonts and glass navigation identity.
+
 Existing saved palette and mode selections remain supported. Cover images fall back to illustrated covers when unavailable. Keyboard focus remains visible.
 
 ## References and decisions

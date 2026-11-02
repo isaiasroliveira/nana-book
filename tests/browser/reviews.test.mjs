@@ -77,6 +77,7 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
           }
           if (window.failReviewReload) { window.failReviewReload = false; return Response.json({ error: 'Falha ao carregar' }, { status: 503 }); }
           if ((options.method || 'GET') === 'POST') {
+            if (window.holdSave) await new Promise(resolve => { window.releaseSave = resolve; });
             window.saveRequests = (window.saveRequests || 0) + 1;
             window.hasMore = false;
             if (window.failReviewSave) { window.failReviewSave = false; return Response.json({ error: 'Não foi possível salvar. Tente novamente.' }, { status: 503 }); }
@@ -117,7 +118,13 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
     await evaluate("document.querySelector('.rating-control input').focus(); window.failReviewSave = true");
     await page("Input.dispatchKeyEvent", { type: "keyDown", key: "ArrowLeft", code: "ArrowLeft", windowsVirtualKeyCode: 37 });
     await page("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowLeft", code: "ArrowLeft", windowsVirtualKeyCode: 37 });
-    await evaluate("document.querySelector('.review-form').requestSubmit()");
+    const saveWidth = await evaluate("document.querySelector('.review-actions button').getBoundingClientRect().width");
+    await evaluate("window.holdSave = true; document.querySelector('.review-form').requestSubmit()");
+    await waitFor("typeof window.releaseSave === 'function'");
+    assert.equal(await evaluate("document.querySelector('.review-actions button').textContent.trim()"), "Salvar avaliação", "saving preserves the action label");
+    assert.equal(await evaluate("document.querySelector('.review-actions button').disabled"), true, "saving prevents repeated submission");
+    assert.ok(Math.abs(await evaluate("document.querySelector('.review-actions button').getBoundingClientRect().width") - saveWidth) < 1, "saving does not shift nearby controls");
+    await evaluate("window.holdSave = false; window.releaseSave()");
     await waitFor("document.querySelector('#review-editor').innerText.includes('Não foi possível salvar')");
     assert.equal(await evaluate("document.querySelector('.rating-control input').value"), '9', 'failed save preserves half-star input');
     assert.equal(await evaluate("document.querySelector('.review-form input[name=confirmed]').checked"), true);

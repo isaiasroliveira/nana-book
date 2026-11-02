@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { MotionProvider } from "@/components/motion-provider";
 import "./globals.css";
 import "./appearance.css";
 
@@ -16,5 +17,5 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       if (saved.palette) document.documentElement.dataset.palette = saved.palette;
       document.documentElement.dataset.mode = saved.mode;
     }
-  } catch {}` }} /></head><body>{children}</body></html>;
+  } catch {}` }} /></head><body><MotionProvider>{children}</MotionProvider></body></html>;
 }

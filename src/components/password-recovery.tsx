@@ -3,6 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { authClient } from "@/services/auth-client";
 import { PasswordRequirements } from "@/components/password-requirements";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { validPassword } from "@/services/password-policy";
 
 export function PasswordRecovery({ token, formClassName }: { token?: string; formClassName?: string }) {
@@ -27,9 +29,9 @@ export function PasswordRecovery({ token, formClassName }: { token?: string; for
   }
   return <>
     <form onSubmit={submit} className={formClassName} aria-busy={busy}>
-      {token ? <><label>Nova senha<input name="password" type="password" autoComplete="new-password" required maxLength={128} disabled={busy} value={password} onChange={event => setPassword(event.target.value)} aria-describedby="password-requirements" /></label><PasswordRequirements password={password} /></>
-        : <label>E-mail<input name="email" type="email" autoComplete="email" required maxLength={254} disabled={busy} /></label>}
-      <button className="button" disabled={busy}>{busy ? "Aguarde…" : token ? "Alterar senha" : "Enviar link"}</button>
+      {token ? <><label>Nova senha<Input name="password" type="password" autoComplete="new-password" required maxLength={128} disabled={busy} value={password} onChange={event => setPassword(event.target.value)} aria-describedby="password-requirements" /></label><PasswordRequirements password={password} /></>
+        : <label>E-mail<Input name="email" type="email" autoComplete="email" required maxLength={254} disabled={busy} /></label>}
+      <Button type="submit" className="diary-action" loading={busy}>{token ? "Alterar senha" : "Enviar link"}</Button>
     </form>
     <p role="status" aria-live="polite">{message}</p>
   </>;

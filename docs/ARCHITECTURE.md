@@ -6,6 +6,8 @@ Nana Book uses Next.js and TypeScript with the App Router. Managed Neon Auth sup
 
 ## Adopted application stack
 
+Tailwind CSS supplies utility styles through PostCSS. Shared controls use shadcn/ui and Fluid Functionalism with Radix primitives; MotionConfig respects reader motion preferences. Existing CSS and appearance tokens remain the theme source during incremental component migration. Playwright supports browser and viewport checks.
+
 Use Next.js with TypeScript for the web interface and server-side application operations, Node.js as the server runtime, and pnpm as the package manager. Keep the interface and backend in one application until a concrete requirement justifies separation. Select supported stable versions and review security advisories before installation and upgrades.
 
 ## Initial direction

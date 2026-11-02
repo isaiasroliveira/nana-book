@@ -2,6 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { BookCover } from "./book-cover";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import type { BookResult } from "@/services/book-catalog";
 
@@ -30,14 +32,14 @@ export function BookSearch({ onSelect }: { onSelect: (book: BookResult) => void 
   }
 
   return (
-    <section id="search" aria-labelledby="search-heading" className="search-section glass-refraction">
+    <section id="search" aria-labelledby="search-heading" className="search-section">
       <div className="section-head"><h2 id="search-heading">Avaliar um livro</h2></div>
       <p className="search-hint">Busque pelo título, autor ou ISBN para encontrar a edição que você leu.</p>
       <form onSubmit={search} className="search-form">
         <label htmlFor="book-query">Título, autor ou ISBN</label>
         <div className="search-controls">
-          <input id="book-query" name="q" required minLength={2} maxLength={200} placeholder="Qual livro você leu?" disabled={loading} />
-          <button className="button" disabled={loading}><Search size={18} aria-hidden="true" />{loading ? "Buscando…" : "Buscar livro"}</button>
+          <Input id="book-query" name="q" required minLength={2} maxLength={200} placeholder="Qual livro você leu?" disabled={loading} />
+          <Button type="submit" className="diary-action" loading={loading} leadingIcon={Search}>Buscar livro</Button>
         </div>
       </form>
       <p role="status" aria-live="polite" className="sub">{status}</p>
@@ -50,7 +52,7 @@ export function BookSearch({ onSelect }: { onSelect: (book: BookResult) => void 
           <p className="book-author">{[book.publisher, book.publishedDate, book.language].filter(Boolean).join(" · ")}</p>
           {book.isbn && <p className="book-author">ISBN: {book.isbn}</p>}
           <small>Fonte: {book.source}</small>
-          <button type="button" className="button" onClick={() => onSelect(book)}>Avaliar esta edição</button>
+          <Button type="button" className="diary-action mt-4" onClick={() => onSelect(book)}>Avaliar esta edição</Button>
           </div>
         </li>)}
       </ul>

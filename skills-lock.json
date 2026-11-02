@@ -7,6 +7,12 @@
       "skillPath": "skills/antiwebslop/SKILL.md",
       "computedHash": "a37eec89e9d3808e7a88e39fa5b77796c45af770335922eb0d401c39c7c64711"
     },
+    "fluid-functionalism": {
+      "source": "mickadesign/fluid-functionalism",
+      "sourceType": "github",
+      "skillPath": "skills/fluid-functionalism/SKILL.md",
+      "computedHash": "4c7f29a8ee10105b3c8396e3b317bcd59043a6f03ee576cbe5ee6a72ee3fdde3"
+    },
     "neon": {
       "source": "neondatabase/agent-skills",
       "sourceType": "github",
@@ -60,6 +66,12 @@
       "sourceType": "github",
       "skillPath": "skills/neon-realtime/SKILL.md",
       "computedHash": "fde6c04309f5fe2b536a83cb6c2da6b1c0a6acfc8ef55edd3aa58d0f75a14971"
+    },
+    "stageshow": {
+      "source": "benjitaylor/skills",
+      "sourceType": "github",
+      "skillPath": "stageshow/SKILL.md",
+      "computedHash": "bf9f07985a62882deae7935b5b1162fb5bf66b248930bb14a75dcaf9d67291b7"
     }
   }
 }

@@ -146,12 +146,14 @@
 }
 .appearance-panel select  {
    width:100%;
+   min-height:44px;
    padding:8px;
    border:1px solid var(--line);
    border-radius:4px;
    background:var(--paper);
    color:var(--ink);
    font:inherit;
+   font-size:16px;
 }
 @media(max-width:760px)  {
    .top-right  {
