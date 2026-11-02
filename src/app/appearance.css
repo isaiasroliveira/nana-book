@@ -6,8 +6,6 @@
   --muted:#b6b3aa;
   --line:#49493d;
   --review:#303029;
-  --note-paper:#e6dfbd;
-  --note-ink:#383b2c;
   --accent:#f5c94f;
   --action:#f5c94f;
   --action-text:#252213;
@@ -22,8 +20,6 @@
   --muted:#606060;
   --line:#d8d8d8;
   --review:#f5edce;
-  --note-paper:#f0eee4;
-  --note-ink:#383838;
   --accent:#80601a;
   --action:#f5c94f;
   --action-text:#252213;
@@ -100,9 +96,6 @@
 [data-palette] .search-controls input  {
    background:var(--surface);
 }
-[data-palette] .hero-card  {
-   background:var(--review);
-}
 [data-palette] .eyebrow, [data-palette] .stars  {
    color:var(--accent);
 }
@@ -146,12 +139,14 @@
 }
 .appearance-panel select  {
    width:100%;
+   min-height:44px;
    padding:8px;
    border:1px solid var(--line);
    border-radius:4px;
    background:var(--paper);
    color:var(--ink);
    font:inherit;
+   font-size:16px;
 }
 @media(max-width:760px)  {
    .top-right  {

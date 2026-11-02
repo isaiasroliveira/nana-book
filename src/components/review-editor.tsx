@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { BookResult } from "@/services/book-catalog";
 import { BookCover } from "./book-cover";
 import { Rating } from "./rating";
+import { Button } from "./ui/button";
 
 export type Review = {
   id: string;
@@ -131,7 +132,7 @@ export function ReviewEditor({ book, initialReview, expectedUserId, onSaved, onC
           <label className="checkbox-label"><input type="checkbox" name="containsSpoilers" checked={containsSpoilers} onChange={event => setContainsSpoilers(event.target.checked)} />Esta opinião contém spoilers</label>
         </fieldset>
         <div className="review-actions">
-          <button className="button" disabled={!ready || saving}>{saving ? "Salvando…" : "Salvar avaliação"}</button>
+          <Button type="submit" className="diary-action" disabled={!ready} loading={saving}>Salvar avaliação</Button>
           <button type="button" className="text-button" disabled={saving} onClick={onCancel}>Cancelar</button>
         </div>
       </form>

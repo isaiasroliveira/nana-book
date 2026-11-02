@@ -146,3 +146,16 @@ test('a form opened under another reader cannot write through a changed session'
   const own = await request('/api/reviews', accounts[0], {volumeId:switchedVolume,ratingUnits:8}, {'X-Expected-User-Id':accounts[0].id});
   assert.equal(own.status,200);
 });
+
+test('readers can delete only their own evaluations', async () => {
+  const [first, second] = accounts;
+  const id = (await (await request(`/api/reviews?volumeId=${volume}`, first)).json()).reviews[0].id;
+  const remove = (account, expected = account?.id, origin = base) => fetch(`${base}/api/reviews?id=${id}`, { method: 'DELETE', headers: { ...(account ? { Cookie: account.cookie } : {}), Origin: origin, ...(expected ? { 'X-Expected-User-Id': expected } : {}) } });
+  assert.equal((await remove(null)).status, 401);
+  assert.equal((await remove(first, first.id, 'https://untrusted.example')).status, 403);
+  assert.equal((await remove(first, second.id)).status, 409);
+  assert.equal((await remove(second)).status, 404);
+  assert.equal((await remove(first)).status, 200);
+  assert.equal((await (await request(`/api/reviews?volumeId=${volume}`, first)).json()).reviews.length, 0);
+  assert.equal((await (await request(`/api/reviews?volumeId=${volume}`, second)).json()).reviews.length, 1);
+});

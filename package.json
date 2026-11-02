@@ -21,15 +21,22 @@
     "@neon/config": "^1.10.0",
     "@neon/env": "^1.6.8",
     "@neondatabase/serverless": "1.2.0",
+    "@radix-ui/react-slot": "^1.5.0",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.5.1",
     "lucide-react": "1.63.0",
+    "motion": "^14.9.0",
     "next": "16.4.3",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "26.6.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "tailwindcss": "^4.3.3",
     "tsx": "4.23.15",
     "typescript": "7.0.2"
   }

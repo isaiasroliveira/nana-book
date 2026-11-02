@@ -6,56 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Changed
-
-- Feature the reader's latest private evaluation in the reading diary.
-- Highlight the selected book and add a draggable star control to the review editor.
-- Clarify book discovery and present search results in compact, responsive edition cards.
-- Give navigation a translucent surface and make reading links available on mobile.
-- Keep a compact glass navigation bar available on desktop and an app-style bottom navigation on mobile.
-- Consolidate mobile navigation and add refractive glass to the navigation and search panel.
-
-- Use higher-resolution Google Books covers when available.
-
-- Warm the original light theme feature band and align the reading note.
-
-- Neutralize the original light canvas and apply the featured reading background across all themes.
-
-- Focus book discovery copy on rating books the reader has already read.
-
-- Give the reading diary a distinct nighttime desk layout with open book covers, compact search and a personal note.
-
-- Display Google Books covers in search results and the demonstration shelf, with illustrated fallbacks for unavailable images.
-
-- Default to a charcoal reading interface with a compact search introduction and featured demonstration book.
-
-- Update the brand image and browser icon.
-- Use Google Books for title, author and ISBN search with a server-side API key.
-
-- Separate book catalog integration from HTTP handling and share the search result type with the reader interface.
-- Refresh the default reading surface with a cool palette and more direct diary copy.
-- Restore Fraunces for headings and use Bricolage Grotesque for interface text.
-- Add reader-selectable light and dark color palettes, explore Bricolage Grotesque in headings and navigation, and refine book cover shadows.
-- Explore petrol blue, sage green and dusty rose in the color prototype.
-
-### Fixed
-
-- Keep older diary responses from overwriting refreshed readings, and prevent an open review from being saved under a switched account.
-
-- Apply the saved appearance before the page first renders to prevent a theme flash.
-
-- Keep the landing illustration visible behind the header across appearance palettes.
-- Preserve readable heading and navigation colors over the light illustration in dark mode.
-- Reject malformed catalog response envelopes instead of treating them as empty search results.
-- Preserve the font import URL when formatting global styles.
-- Align book authors and ratings across each row of the reading shelf.
-- Pin direct dependency versions and document runtime activation and the verification command.
-
-- Render fractional ratings with half-filled stars instead of a fraction character.
-
-- Avoid a browser global name collision that prevented prototype layouts from rendering.
-
 ### Added
+
+- Use the Nana Book app artwork for browser installation and iPhone home-screen icons.
+
+- Add a password recovery flow through Neon Auth.
+- Require and display password rules when creating or resetting a password.
+- Allow readers to delete their own private evaluations after confirmation.
+- Confirm account emails with a verification code and allow requesting a new code.
 
 - Add Neon Auth sign-up, sign-in, session restoration and sign-out for private reading diaries.
 - Save half-star ratings, optional opinions and spoiler markers; revise evaluations without duplicates.
@@ -82,6 +40,62 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Document initial architecture and coding standards.
 - Record Next.js and TypeScript as the adopted application stack.
 
+### Changed
+
+- Present reading impressions as open editorial text beside the book, improve text hierarchy and spacing, and reduce decorative shadows.
+- Extend shared Fluid Functionalism buttons and loading states to account, password recovery, review saving and diary pagination; align form fields and appearance touch targets.
+- Adopt Tailwind CSS, shadcn/ui and Fluid Functionalism for search controls and navigation hover, with reduced motion support.
+- Tighten shelf metadata spacing and add Playwright for visual browser checks.
+- Feature the reader's latest private evaluation in the reading diary.
+- Highlight the selected book and add a draggable star control to the review editor.
+- Clarify book discovery and present search results in compact, responsive edition cards.
+- Give navigation a translucent surface and make reading links available on mobile.
+- Keep a compact glass navigation bar available on desktop and an app-style bottom navigation on mobile.
+- Limit refractive glass to fixed navigation surfaces and provide opaque fallbacks for reduced transparency and unsupported browsers.
+
+- Use higher-resolution Google Books covers when available.
+
+- Warm the original light theme feature band and align the reading note.
+
+- Neutralize the original light canvas and apply the featured reading background across all themes.
+
+- Focus book discovery copy on rating books the reader has already read.
+
+- Give the reading diary a distinct nighttime desk layout with open book covers, compact search and a personal note.
+
+- Display Google Books covers in search results and the demonstration shelf, with illustrated fallbacks for unavailable images.
+
+- Default to a charcoal reading interface with a compact search introduction and featured demonstration book.
+
+- Update the brand image and browser icon.
+- Use Google Books for title, author and ISBN search with a server-side API key.
+
+- Separate book catalog integration from HTTP handling and share the search result type with the reader interface.
+- Refresh the default reading surface with a cool palette and more direct diary copy.
+- Restore Fraunces for headings and use Bricolage Grotesque for interface text.
+- Add reader-selectable light and dark color palettes, explore Bricolage Grotesque in headings and navigation, and refine book cover shadows.
+- Explore petrol blue, sage green and dusty rose in the color prototype.
+
 ### Removed
 
 - Remove temporary layout prototypes after approval of the diary direction.
+
+### Fixed
+
+- Let readers resume email code confirmation after reloading and preserve the code already sent by Neon after signup.
+- Reconcile the diary when a deletion succeeded but its response was lost.
+
+- Keep older diary responses from overwriting refreshed readings, and prevent an open review from being saved under a switched account.
+
+- Apply the saved appearance before the page first renders to prevent a theme flash.
+
+- Keep the landing illustration visible behind the header across appearance palettes.
+- Preserve readable heading and navigation colors over the light illustration in dark mode.
+- Reject malformed catalog response envelopes instead of treating them as empty search results.
+- Preserve the font import URL when formatting global styles.
+- Align book authors and ratings across each row of the reading shelf.
+- Pin direct dependency versions and document runtime activation and the verification command.
+
+- Render fractional ratings with half-filled stars instead of a fraction character.
+
+- Avoid a browser global name collision that prevented prototype layouts from rendering.

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Ref } from "react";
 import { Palette as PaletteIcon } from "lucide-react";
 
 import { readAppearance, saveAppearance, type Palette, type Mode } from "../services/appearance";
 
-export function AppearanceSettings() {
+export function AppearanceSettings({ summaryRef }: { summaryRef?: Ref<HTMLElement> }) {
   const [palette, setPalette] = useState<Palette | "">("");
   const [mode, setMode] = useState<Mode>("dark");
   const [loaded, setLoaded] = useState(false);
@@ -34,7 +34,7 @@ export function AppearanceSettings() {
   }, [loaded, palette, mode]);
 
   return <details className="appearance-settings">
-    <summary><PaletteIcon size={19} aria-hidden="true" /><span>Aparência</span></summary>
+    <summary ref={summaryRef}><PaletteIcon size={19} aria-hidden="true" /><span>Aparência</span></summary>
     <div className="appearance-panel">
       <label>Paleta
         <select value={palette} onChange={event => setPalette(event.target.value as Palette | "")}>

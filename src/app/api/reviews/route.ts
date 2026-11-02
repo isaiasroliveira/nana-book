@@ -104,3 +104,19 @@ export async function POST(request: Request) {
     return Response.json({ review }, { headers });
   } catch { return failure("Não foi possível salvar sua avaliação. Tente novamente.", 503); }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { data: session, error } = await getSession();
+    if (error) throw error;
+    if (!session?.user) return failure("Entre na sua conta para excluir sua avaliação.", 401);
+    if (request.headers.get("origin") !== new URL(request.url).origin) return failure("Origem inválida.", 403);
+    if (request.headers.get("x-expected-user-id") !== session.user.id) return failure("Sua conta mudou. Atualize o diário antes de excluir.", 409);
+    const id = new URL(request.url).searchParams.get("id");
+    if (!id || !uuidPattern.test(id)) return failure("Avaliação inválida.", 400);
+    const sql = database();
+    const rows = await sql`DELETE FROM reviews WHERE id = ${id}::uuid AND user_id = ${session.user.id}::uuid RETURNING id`;
+    if (!rows.length) return failure("Avaliação não encontrada.", 404);
+    return Response.json({ deleted: true }, { headers });
+  } catch { return failure("Não foi possível excluir sua avaliação. Tente novamente.", 503); }
+}

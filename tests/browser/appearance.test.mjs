@@ -65,9 +65,12 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     assert.equal(await evaluate("document.querySelector('.nav a[href=\"/\"]').hasAttribute('aria-current')"), false);
     assert.equal(await evaluate("!!document.querySelector('.featured-cover img[alt]')"), true);
     assert.equal(await evaluate("document.querySelector('#search-heading').textContent"), "Avaliar um livro");
+    assert.ok(await evaluate("parseFloat(getComputedStyle(document.body).fontSize) >= 16"), "reading text uses at least 16px");
 
     assert.match(await evaluate("document.querySelector('.brand img').getAttribute('src')"), /nana-book/);
     assert.ok(await evaluate("!!document.querySelector('link[rel=icon]')"));
+    assert.ok(await evaluate("!!document.querySelector('link[rel=manifest]')"), "browser installation can discover the app manifest");
+    assert.ok(await evaluate("!!document.querySelector('link[rel=apple-touch-icon]')"), "iPhone home-screen installation can discover the app artwork");
     await new Promise(resolve => setTimeout(resolve, 500));
     for (const width of [390, 768, 1440]) {
       await page("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -122,7 +125,9 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     assert.equal(await evaluate("document.documentElement.dataset.palette"), undefined);
     assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(255, 255, 255)");
     await waitFor("!!document.querySelector('.hero-card')");
-    assert.equal(await evaluate("getComputedStyle(document.querySelector('.hero-card')).backgroundColor"), "rgb(245, 237, 206)");
+    for (const selector of [".hero-card", ".diary-note"]) {
+      assert.equal(await evaluate(`getComputedStyle(document.querySelector('${selector}')).backgroundColor`), "rgba(0, 0, 0, 0)", "reading impressions sit directly on the page");
+    }
     await page("Network.enable");
     await page("Network.setBlockedURLs", { urls: ["*/_next/static/chunks/*.js*", "*/_next/static/chunks/**/*.js*"] });
     await page("Page.reload");
@@ -136,6 +141,12 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await evaluate(`(() => { const mode = document.querySelectorAll('select')[1]; mode.value = 'dark'; mode.dispatchEvent(new Event('change', {bubbles:true})); })()`);
     await waitFor("!document.documentElement.dataset.mode");
     assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(37, 37, 31)");
+    await page("Emulation.setDeviceMetricsOverride", { width: 393, height: 852, deviceScaleFactor: 1, mobile: true });
+    await page("Page.navigate", { url: `${process.env.TEST_BASE_URL || "http://localhost:3000"}/auth/reset-password?token=test` });
+    await waitFor("!!document.querySelector('input[name=password]')");
+    assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true, "password recovery fits a mobile screen");
+    assert.equal(await evaluate("document.querySelectorAll('.password-requirements li').length"), 5);
+    assert.equal(await evaluate("document.querySelector('button').getBoundingClientRect().height >= 48"), true);
   } finally {
     socket?.close();
     chrome.kill();
