@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Clarify book discovery and present search results in compact, responsive edition cards.
+- Give navigation a translucent surface and make reading links available on mobile.
+- Keep a compact glass navigation bar available on desktop and an app-style bottom navigation on mobile.
+- Consolidate mobile navigation and add refractive glass to the navigation and search panel.
+
 - Use higher-resolution Google Books covers when available.
 
 - Warm the original light theme feature band and align the reading note.
