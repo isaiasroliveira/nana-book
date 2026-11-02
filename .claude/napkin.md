@@ -11,4 +11,4 @@
 ## Execution and validation
 
 1. **[2026-11-01] Corepack can resolve the wrong pnpm executable**
-   Do instead: use `fnm exec --using=26.13.0 npx --yes pnpm@12.14.0 verify` to activate the pinned runtime and package manager when `pnpm` reports a missing `bin/pnpm.cjs`.
+   Do instead: activate the pinned runtime with `fnm exec --using=26.13.0`. If both Corepack and `npx pnpm` fail or stall, run the installed `node_modules/typescript/bin/tsc`, `node_modules/next/dist/bin/next` and `node --import tsx --test` commands directly.

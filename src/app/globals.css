@@ -436,6 +436,7 @@ button:focus-visible,a:focus-visible {
 .diary-note { background:var(--note-paper); color:var(--note-ink); padding:24px; border-radius:2px 2px 16px 2px; }
 .diary-note > span { font:400 13px var(--sans); }
 .diary-note blockquote { font:400 24px/1.35 var(--serif); margin:24px 0; }
+.featured-details h2, .diary-note blockquote { overflow-wrap:anywhere; }
 .diary-note .stars { color:var(--note-ink); }
 .diary-note small { display:block; margin-top:16px; font-size:12px; }
 .section-head { margin:64px 0 24px; }
@@ -487,3 +488,86 @@ button:focus-visible,a:focus-visible {
 
 .book-cover .catalog-cover { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .search-results .book-cover { width:96px; margin-bottom:16px; }
+.search-hint { color:var(--muted); line-height:1.5; margin:0 0 16px; }
+.search-results li { display:grid; grid-template-columns:96px minmax(0,1fr); gap:24px; align-items:start; background:var(--surface); }
+.search-result-details { min-width:0; overflow-wrap:anywhere; }
+.search-result-details h3 { font-size:20px; line-height:1.25; }
+.search-result-details > .button { margin-top:16px; }
+.search-placeholder > span { display:block; width:96px; aspect-ratio:2/3; background:var(--line); border-radius:4px; }
+.search-placeholder div span { display:block; height:12px; margin:8px 0 16px; border-radius:4px; background:var(--line); }
+.search-placeholder div span:nth-child(2) { width:70%; }
+.search-placeholder div span:nth-child(3) { width:45%; }
+@media(max-width:760px) { .search-results li { grid-template-columns:72px minmax(0,1fr); padding:16px; gap:16px; } .search-results .book-cover,.search-placeholder > span { width:72px; } }
+
+.account-link { font-size:14px; }
+.search-results li > .button { display:flex; margin-top:16px; }
+.review-editor { max-width:680px; margin:48px 0; scroll-margin-top:24px; }
+.review-editor h2 { font:400 24px/32px var(--sans); }
+.review-editor h3 { font:400 24px/32px var(--serif); margin:16px 0 8px; }
+.review-editor .sub { margin:8px 0; }
+.review-form { margin-top:24px; }
+.review-form fieldset { border:0; margin:0; padding:0; display:grid; gap:12px; }
+.review-form :is(select,textarea) { width:100%; padding:12px; border:1px solid var(--line); border-radius:4px; background:var(--surface); color:var(--ink); font:inherit; }
+.review-form select { max-width:256px; }
+.review-form textarea { resize:vertical; min-height:160px; }
+.review-form .checkbox-label { display:flex; align-items:baseline; gap:8px; line-height:1.5; }
+.review-form input[type="checkbox"] { flex:none; accent-color:var(--accent); }
+.review-actions { display:flex; flex-wrap:wrap; align-items:center; gap:24px; margin-top:24px; }
+.text-button { display:inline-block; padding:8px 0; border:0; background:transparent; color:var(--ink); text-decoration:underline; text-underline-offset:4px; }
+.text-button:disabled { opacity:.6; cursor:not-allowed; }
+.diary-readings { display:grid; gap:32px; }
+.diary-readings > article { display:grid; grid-template-columns:96px minmax(0,1fr); gap:24px; align-items:start; }
+.diary-readings .book-cover { width:96px; }
+.diary-readings .book-title { font:400 24px/32px var(--serif); margin:0 0 8px; }
+.diary-readings .text-button { margin-top:16px; }
+.review-opinion { white-space:pre-wrap; overflow-wrap:anywhere; max-width:80ch; line-height:1.6; }
+.spoiler-label { font-weight:600; }
+:is(input,select,textarea):focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+@media(max-width:760px) {
+  .top-right { gap:8px; }
+  .account-link { font-size:12px; }
+  .diary-readings > article { grid-template-columns:80px minmax(0,1fr); gap:16px; }
+  .diary-readings .book-cover { width:80px; }
+}
+
+.top { position:fixed; z-index:20; top:16px; left:50%; transform:translateX(-50%); width:calc(100% - 48px); max-width:1320px; height:72px; padding:0 24px; gap:32px; background:color-mix(in srgb, var(--surface) 94%, transparent); border:1px solid color-mix(in srgb, var(--ink) 24%, transparent); border-radius:999px; backdrop-filter:blur(24px) saturate(160%); box-shadow:inset 0 1px 0 #ffffff85, inset 0 -1px 2px #ffffff24, 0 12px 32px #0003; transition:max-width 500ms cubic-bezier(.22,1,.36,1), box-shadow 300ms; }
+.top::before, .nav::before { content:""; position:absolute; inset:1px; border-radius:inherit; pointer-events:none; background:linear-gradient(155deg, #ffffff25, transparent 38%, transparent 72%, #ffffff0d); }
+.top-scrolled { max-width:960px; box-shadow:inset 0 1px 0 #ffffff85, inset 0 -1px 2px #ffffff24, 0 12px 32px #0004; }
+.wrap { padding-top:144px; }
+.nav a { min-height:44px; display:inline-flex; align-items:center; gap:8px; }
+.nav a svg { display:none; }
+.nav a img { display:none; }
+.nav { flex:1; align-items:center; }
+.nav-settings { margin-left:auto; }
+.appearance-settings summary { display:flex; align-items:center; gap:8px; }
+.appearance-settings summary svg { display:none; }
+.search-section { padding:24px; border:1px solid color-mix(in srgb, var(--ink) 18%, transparent); border-radius:24px; background:color-mix(in srgb, var(--surface) 85%, transparent); box-shadow:inset 0 1px 0 #ffffff60, 0 12px 32px #0002; }
+.search-section .search-results li { background:color-mix(in srgb, var(--surface) 90%, transparent); box-shadow:inset 0 1px 0 #ffffff40; }
+@media(max-width:760px) {
+  .top { position:static; transform:none; width:auto; height:0; padding:0; background:none; border:0; border-radius:0; backdrop-filter:none !important; box-shadow:none; }
+  .brand { display:none; }
+  .top::before { display:none; }
+  .wrap { padding-top:32px; padding-bottom:calc(104px + env(safe-area-inset-bottom)); }
+  .nav { position:fixed; z-index:30; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:2px; padding:8px; border:1px solid color-mix(in srgb, var(--ink) 35%, transparent); border-radius:28px; background:color-mix(in srgb, var(--surface) 90%, transparent); backdrop-filter:blur(24px) saturate(160%); box-shadow:inset 0 1px 0 #ffffffb0, inset 0 -2px 4px #ffffff35, 0 12px 32px #0006; }
+  .nav a, .nav-settings summary { min-width:0; min-height:56px; display:flex; flex-direction:column; justify-content:center; gap:3px; padding:4px 2px; border-radius:18px; font-size:11px; text-align:center; }
+  .nav a svg, .nav a img, .nav-settings summary svg { display:block; }
+  .nav a img { width:24px; height:24px; object-fit:contain; }
+  .nav-settings { margin:0; min-width:0; }
+  .nav-settings summary { cursor:pointer; }
+  .nav-settings .appearance-panel { top:auto; bottom:calc(100% + 16px); right:0; }
+  .nav .active, .nav-settings details[open] summary { text-decoration:none; color:var(--ink); background:color-mix(in srgb, var(--accent) 18%, var(--surface)); }
+  .search-section { padding:20px; }
+}
+@media(min-width:761px) { .nav::before { display:none; } }
+@media(prefers-reduced-motion:reduce) { .top { transition:none; } }
+@media(prefers-reduced-transparency:reduce) { .top, .nav, .search-section { background:var(--surface); backdrop-filter:none !important; } }
+.review-editor { max-width:850px; padding:32px; border:1px solid var(--line); border-radius:24px; background:var(--surface); box-shadow:inset 0 1px 0 #ffffff40, 0 12px 32px #0002; }
+.review-book { display:grid; grid-template-columns:144px minmax(0,1fr); gap:24px; align-items:center; margin-top:24px; }
+.review-book .book-cover { width:144px; }
+.review-book h3 { margin-top:0; }
+.rating-control { position:relative; width:212px; max-width:100%; height:44px; display:flex; align-items:center; }
+.rating-control .stars { gap:8px; margin:0; }
+.rating-control .rating-star, .rating-control .rating-star svg { width:36px; height:36px; }
+.rating-control input { position:absolute; inset:0; width:100%; height:100%; margin:0; cursor:pointer; opacity:0; }
+.rating-control:focus-within { outline:3px solid var(--accent); outline-offset:4px; border-radius:4px; }
+@media(max-width:760px) { .review-editor { padding:20px; scroll-margin-top:16px; } .review-book { grid-template-columns:96px minmax(0,1fr); gap:16px; } .review-book .book-cover { width:96px; } .review-book h3 { font-size:20px; line-height:1.25; } .review-editor :is(input,textarea,button) { scroll-margin-bottom:120px; } body:has(.review-editor textarea:focus) .nav { visibility:hidden; } }

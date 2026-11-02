@@ -5,7 +5,7 @@ import { BookCover } from "./book-cover";
 import { Search } from "lucide-react";
 import type { BookResult } from "@/services/book-catalog";
 
-export function BookSearch() {
+export function BookSearch({ onSelect }: { onSelect: (book: BookResult) => void }) {
   const [books, setBooks] = useState<BookResult[]>([]);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,8 +30,9 @@ export function BookSearch() {
   }
 
   return (
-    <section id="search" aria-labelledby="search-heading" className="search-section">
+    <section id="search" aria-labelledby="search-heading" className="search-section glass-refraction">
       <div className="section-head"><h2 id="search-heading">Avaliar um livro</h2></div>
+      <p className="search-hint">Busque pelo título, autor ou ISBN para encontrar a edição que você leu.</p>
       <form onSubmit={search} className="search-form">
         <label htmlFor="book-query">Título, autor ou ISBN</label>
         <div className="search-controls">
@@ -41,12 +42,16 @@ export function BookSearch() {
       </form>
       <p role="status" aria-live="polite" className="sub">{status}</p>
       <ul className="search-results" aria-busy={loading}>
+        {loading && <li className="search-placeholder" aria-hidden="true"><span /><div><span /><span /><span /></div></li>}
         {books.map(book => <li key={book.id}>
           <BookCover book={{ title: book.title, author: book.authors.join(", "), color: "#52675d", art: "", coverUrl: book.coverUrl }} />
+          <div className="search-result-details">
           <h3>{book.title}</h3><p>{book.authors.join(", ") || "Autoria não informada"}</p>
           <p className="book-author">{[book.publisher, book.publishedDate, book.language].filter(Boolean).join(" · ")}</p>
           {book.isbn && <p className="book-author">ISBN: {book.isbn}</p>}
           <small>Fonte: {book.source}</small>
+          <button type="button" className="button" onClick={() => onSelect(book)}>Avaliar esta edição</button>
+          </div>
         </li>)}
       </ul>
     </section>

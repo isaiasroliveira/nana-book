@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Feature the reader's latest private evaluation in the reading diary.
+- Highlight the selected book and add a draggable star control to the review editor.
+- Clarify book discovery and present search results in compact, responsive edition cards.
+- Give navigation a translucent surface and make reading links available on mobile.
+- Keep a compact glass navigation bar available on desktop and an app-style bottom navigation on mobile.
+- Consolidate mobile navigation and add refractive glass to the navigation and search panel.
+
 - Use higher-resolution Google Books covers when available.
 
 - Warm the original light theme feature band and align the reading note.
@@ -33,6 +40,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Keep older diary responses from overwriting refreshed readings, and prevent an open review from being saved under a switched account.
+
 - Apply the saved appearance before the page first renders to prevent a theme flash.
 
 - Keep the landing illustration visible behind the header across appearance palettes.
@@ -47,6 +56,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Avoid a browser global name collision that prevented prototype layouts from rendering.
 
 ### Added
+
+- Add Neon Auth sign-up, sign-in, session restoration and sign-out for private reading diaries.
+- Save half-star ratings, optional opinions and spoiler markers; revise evaluations without duplicates.
+- Add normalized PostgreSQL persistence with ownership constraints, atomic saves and stable diary pagination.
+- Verify private reviews through browser flows, real Neon Auth and isolated PostgreSQL integration tests.
 
 - Offer a persistent light mode for the original yellow reading theme.
 

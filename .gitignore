@@ -11,3 +11,4 @@ node_modules/
 
 .corepack-cache/
 graphify-out/
+.neon

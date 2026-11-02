@@ -58,6 +58,11 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     }
     await page("Page.navigate", { url: process.env.TEST_BASE_URL || "http://localhost:3000" });
     await waitFor("!!document.querySelector('summary')");
+    await waitFor("!!document.querySelector('.featured-cover img[alt]')");
+    await evaluate("document.querySelector('.nav a[href=\"#readings\"]').click()");
+    await waitFor("document.querySelector('.nav a[href=\"#readings\"]').getAttribute('aria-current') === 'location'");
+    assert.equal(await evaluate("document.querySelector('.nav a[href=\"#readings\"]').textContent.trim()"), "Leituras");
+    assert.equal(await evaluate("document.querySelector('.nav a[href=\"/\"]').hasAttribute('aria-current')"), false);
     assert.equal(await evaluate("!!document.querySelector('.featured-cover img[alt]')"), true);
     assert.equal(await evaluate("document.querySelector('#search-heading').textContent"), "Avaliar um livro");
 
@@ -66,6 +71,14 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await new Promise(resolve => setTimeout(resolve, 500));
     for (const width of [390, 768, 1440]) {
       await page("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
+      assert.equal(await evaluate("document.querySelector('.nav a[href=\"#readings\"]').getBoundingClientRect().width > 0"), true, "readers can navigate to their readings at every screen size");
+      assert.equal(await evaluate(width <= 760 ? "getComputedStyle(document.querySelector('.nav')).position" : "getComputedStyle(document.querySelector('.top')).position"), "fixed", "navigation stays available while scrolling");
+      if (width <= 760) {
+        assert.equal(await evaluate("!!document.querySelector('.nav a[href=\"/auth/sign-in\"]') && !!document.querySelector('.nav summary')"), true, "mobile navigation includes account and appearance");
+        await evaluate("document.querySelector('.appearance-settings').open = true");
+        assert.equal(await evaluate("(() => { const r = document.querySelector('.appearance-panel').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth && r.top >= 0 && r.bottom <= innerHeight; })()"), true, "appearance controls stay within the mobile screen");
+        await evaluate("document.querySelector('.appearance-settings').open = false");
+      }
       for (const palette of ["", "petrol", "sage", "rose"]) {
         for (const mode of ["light", "dark"]) {
           await evaluate(`Object.assign(document.documentElement.dataset, ${JSON.stringify({ palette, mode })})`);
@@ -108,6 +121,7 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await waitFor("document.documentElement?.dataset.mode === 'light'");
     assert.equal(await evaluate("document.documentElement.dataset.palette"), undefined);
     assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(255, 255, 255)");
+    await waitFor("!!document.querySelector('.hero-card')");
     assert.equal(await evaluate("getComputedStyle(document.querySelector('.hero-card')).backgroundColor"), "rgb(245, 237, 206)");
     await page("Network.enable");
     await page("Network.setBlockedURLs", { urls: ["*/_next/static/chunks/*.js*", "*/_next/static/chunks/**/*.js*"] });

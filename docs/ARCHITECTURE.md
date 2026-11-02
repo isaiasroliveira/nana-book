@@ -2,7 +2,7 @@
 
 ## Status
 
-Nana Book is in planning. Next.js and TypeScript are adopted for the application. The initial App Router home page implements the approved diary layout with demonstration data. Authentication, persistence and sharing are not implemented. The application lives in `src/app`, reusable UI in `src/components`, and public assets in `public`. Google Books is adopted for interactive book discovery; deployment remains open.
+Nana Book uses Next.js and TypeScript with the App Router. Managed Neon Auth supplies reader identity and PostgreSQL on Neon persists private evaluations. The application lives in `src/app`, reusable UI in `src/components`, and public assets in `public`. Google Books supplies interactive book discovery. Sharing and deployment remain open.
 
 ## Adopted application stack
 
@@ -10,7 +10,7 @@ Use Next.js with TypeScript for the web interface and server-side application op
 
 ## Initial direction
 
-The product is a mobile-first web application for reader profiles, ratings and sharing. The proposed stack is Vercel, PostgreSQL on Neon and Better Auth. Managed versus self-hosted Better Auth remains undecided. Node.js and pnpm are the project runtime and package manager; pinned versions should be kept current with security releases.
+The product is a mobile-first reading diary. Managed Neon Auth uses Better Auth through the installed Neon SDK. Node.js and pnpm are the project runtime and package manager; pinned versions should be kept current with security releases.
 
 ```text
 Reader → web application → business rules and authentication
@@ -23,8 +23,14 @@ The server validates external input and enforces authorization. The database pre
 
 Sharing generates a preview and invokes the device share sheet when supported; saving the image provides a fallback. Test the Instagram flow on physical iPhone and Android devices.
 
-Open decisions include book metadata and cover licensing, authentication deployment, file storage, privacy, recovery and costs.
+Open decisions include file storage, recovery, sharing and deployment.
+
+## Private evaluations
+
+Route handlers validate sessions with the Neon SDK before reading or saving evaluations. Ownership always comes from the verified session. Private responses are never shared-cacheable. Mutations require a matching request origin and bounded JSON input.
+
+The relational schema uses internal edition identities and the existing authentication user primary key. Reviews reference both identities through foreign keys, enforce a rating of 1 through 10 half-star units and allow one current evaluation per reader and edition. Reader deletion cascades to reviews; referenced edition deletion is restricted. Edition resolution and review upsert share one atomic PostgreSQL statement. The diary uses stable cursor pagination ordered by creation time and review identity. Migrations live in `db/migrations` and execute transactionally through `scripts/migrate.mjs`.
 
 ## Book catalog
 
-Google Books is the sole catalog provider. The server uses a project API key to search titles, authors and ISBNs and returns available volume metadata with source attribution. The public endpoint preserves bounded input, timeouts and empty/error states. Provider quotas apply per Google Cloud project; monitor them in the Cloud Console. Metadata remains transient; persistence and cover permissions remain outside this integration.
+Google Books is the sole catalog provider. The server uses a project API key to search titles, authors and ISBNs and resolves selected volume identities before saving evaluations. Public results carry source attribution. Catalog calls use bounded timeouts and preserve empty/error states. A catalog outage does not hide saved reader evaluations. Provider quotas apply per Google Cloud project; monitor them in the Cloud Console.
