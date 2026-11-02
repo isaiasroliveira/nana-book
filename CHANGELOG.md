@@ -40,6 +40,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Reconcile the diary when a deletion succeeded but its response was lost.
+
 - Keep older diary responses from overwriting refreshed readings, and prevent an open review from being saved under a switched account.
 
 - Apply the saved appearance before the page first renders to prevent a theme flash.

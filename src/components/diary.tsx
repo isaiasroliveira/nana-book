@@ -116,7 +116,7 @@ export function Diary() {
       const response = await fetch(`/api/reviews?id=${encodeURIComponent(id)}`, {
         method: "DELETE", headers: { "X-Expected-User-Id": user.id }, signal: AbortSignal.timeout(15000),
       });
-      if (!response.ok) throw new Error();
+      if (!response.ok && response.status !== 404) throw new Error();
       setDeleting(null);
       setReviews(current => current.filter(review => review.id !== id));
       if (selection?.review?.id === id) setSelection(null);

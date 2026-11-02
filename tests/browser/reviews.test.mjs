@@ -70,7 +70,8 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
         if (url.pathname === '/api/reviews') {
           const reviews = window.sessionReader === 'reader-2' ? [] : JSON.parse(localStorage.getItem('review-fixture') || '[]');
           if (options.method === 'DELETE') {
-            if (window.failDelete) { window.failDelete = false; return Response.json({ error: 'Falha' }, { status: 503 }); }
+            if (window.failDelete) { window.failDelete = false; localStorage.setItem('review-fixture', JSON.stringify(reviews.filter(review => review.id !== url.searchParams.get('id')))); return Response.json({ error: 'Falha' }, { status: 503 }); }
+            if (!reviews.some(review => review.id === url.searchParams.get('id'))) return Response.json({ error: 'Não encontrada' }, { status: 404 });
             localStorage.setItem('review-fixture', JSON.stringify(reviews.filter(review => review.id !== url.searchParams.get('id'))));
             return Response.json({ deleted: true });
           }
