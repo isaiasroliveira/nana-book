@@ -1,6 +1,6 @@
 # Nana Book
 
-A mobile-first reading journal built with Next.js and TypeScript. The initial home page implements the approved diary layout with demonstration readings, catalog covers, ratings and half-filled stars. Authentication, persistence and sharing are not implemented yet.
+A mobile-first reading journal built with Next.js and TypeScript. Readers can sign in, select a book edition and save private half-star ratings, opinions and spoiler markers. Signed-out visitors see a clearly marked demonstration diary.
 
 ## Development
 
@@ -44,10 +44,32 @@ Open http://localhost:3000. Stop the container with Ctrl+C. Rebuild the image af
 
 Run `pnpm test` to check component behavior. `pnpm verify` also runs the tests before type checking and building.
 
+Run `pnpm test:browser` against the local development server to check appearance and the review flow. The review browser test uses deterministic HTTP fixtures.
+
+For integration tests, create an isolated Neon branch with Auth enabled and email verification disabled for test accounts. Put its pooled connection in `DATABASE_URL`, its direct connection in `DATABASE_URL_UNPOOLED` and `TEST_DATABASE_URL`, and its Auth URL and an application cookie secret in a private `.env.test` file. Never use production credentials. PostgreSQL client tools (`psql`) must be installed.
+
+```sh
+node --env-file=.env.test scripts/migrate.mjs
+pnpm build
+node --env-file=.env.test --import ./tests/fixtures/catalog-preload.mjs node_modules/next/dist/bin/next start --port 3102
+# In another terminal:
+node --env-file=.env.test --test tests/integration/*.test.mjs
+```
+
+These tests use real PostgreSQL and Neon Auth through the public HTTP endpoints, with deterministic Google Books responses. They create temporary reader accounts and remove them after the run. They cover ownership, direct database constraints, concurrent saves, stable pagination and transactional rollback.
+
+## Private diary setup
+
+Use the Neon branch connection settings in `.env.local`: `DATABASE_URL` for application queries, `DATABASE_URL_UNPOOLED` for migrations, and `NEON_AUTH_BASE_URL` for Managed Neon Auth. Generate `NEON_AUTH_COOKIE_SECRET` with `openssl rand -base64 32`. Keep these values private. Register the application origin in the branch Auth trusted domains.
+
+Run `pnpm db:migrate` before starting the application. Migrations run in a transaction over the direct connection and record their applied filenames. The schema references the existing `neon_auth.user` identity. Sign up or sign in at `/auth/sign-in`; use the same page to sign out.
+
+The diary uses one current evaluation per reader and edition. Ratings range from 0.5 to 5 stars. Opinions are optional plain text, limited to 5,000 characters, and can be marked as spoilers. Editing updates the existing evaluation. Private API responses use `private, no-store` caching, and ownership comes from the authenticated session.
+
 ## Experimental book search
 
 Book search uses [Google Books](https://developers.google.com/books/docs/v1/using). Set `GOOGLE_BOOKS_API_KEY` in `.env.local` using a Google Cloud project with the Books API enabled, and restart the application. The key is used only on the server. Remove the obsolete `OPEN_LIBRARY_CONTACT_EMAIL` setting.
 
-Searches support titles, authors and ISBNs. Results identify Google Books and include available edition metadata. Searches are not persisted and responses are not cached; saving readings remains outside this slice. Available provider covers appear in search results. Google applies project quotas; check the Books API quota page in Google Cloud Console for current limits and usage.
+Searches support titles, authors and ISBNs. Results identify Google Books and include available edition metadata. Available provider covers appear in search results. Google applies project quotas; check the Books API quota page in Google Cloud Console for current limits and usage.
 
 Search endpoint tests mock external HTTP responses. Browser checks cover success and provider-error feedback; these checks do not establish live provider coverage or quotas.
