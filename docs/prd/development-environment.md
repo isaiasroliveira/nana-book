@@ -2,7 +2,7 @@
 
 ## Problem
 
-Developers need a repeatable way to run Nana Books and verify application behavior.
+Developers need a repeatable way to run Nana Book and verify application behavior.
 
 ## Solution
 

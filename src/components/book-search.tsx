@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { BookCover } from "./book-cover";
 import { Search } from "lucide-react";
-
-type BookResult = { id: string; source: string; title: string; authors: string[]; isbn?: string; publisher?: string; language?: string; publishedDate?: string };
+import type { BookResult } from "@/services/book-catalog";
 
 export function BookSearch() {
   const [books, setBooks] = useState<BookResult[]>([]);
@@ -31,17 +31,18 @@ export function BookSearch() {
 
   return (
     <section id="search" aria-labelledby="search-heading" className="search-section">
-      <div className="section-head"><h2 id="search-heading">Encontre sua próxima leitura</h2></div>
+      <div className="section-head"><h2 id="search-heading">Avaliar um livro</h2></div>
       <form onSubmit={search} className="search-form">
         <label htmlFor="book-query">Título, autor ou ISBN</label>
         <div className="search-controls">
-          <input id="book-query" name="q" required minLength={2} maxLength={200} placeholder="Qual livro você procura?" disabled={loading} />
-          <button className="button" disabled={loading}><Search size={18} aria-hidden="true" />{loading ? "Buscando…" : "Buscar"}</button>
+          <input id="book-query" name="q" required minLength={2} maxLength={200} placeholder="Qual livro você leu?" disabled={loading} />
+          <button className="button" disabled={loading}><Search size={18} aria-hidden="true" />{loading ? "Buscando…" : "Buscar livro"}</button>
         </div>
       </form>
       <p role="status" aria-live="polite" className="sub">{status}</p>
       <ul className="search-results" aria-busy={loading}>
         {books.map(book => <li key={book.id}>
+          <BookCover book={{ title: book.title, author: book.authors.join(", "), color: "#52675d", art: "", coverUrl: book.coverUrl }} />
           <h3>{book.title}</h3><p>{book.authors.join(", ") || "Autoria não informada"}</p>
           <p className="book-author">{[book.publisher, book.publishedDate, book.language].filter(Boolean).join(" · ")}</p>
           {book.isbn && <p className="book-author">ISBN: {book.isbn}</p>}

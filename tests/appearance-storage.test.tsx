@@ -9,7 +9,7 @@ test("appearance survives saving and restoring for every palette and mode", () =
     setItem: (_key: string, next: string) => { value = next; },
     removeItem: () => { value = null; },
   };
-  for (const palette of ["petrol", "sage", "rose"] as const) {
+  for (const palette of ["", "petrol", "sage", "rose"] as const) {
     for (const mode of ["light", "dark"] as const) {
       saveAppearance(storage, { palette, mode });
       assert.deepEqual(readAppearance(storage), { palette, mode });

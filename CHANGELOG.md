@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Use higher-resolution Google Books covers when available.
+
+- Warm the original light theme feature band and align the reading note.
+
+- Neutralize the original light canvas and apply the featured reading background across all themes.
+
+- Focus book discovery copy on rating books the reader has already read.
+
+- Give the reading diary a distinct nighttime desk layout with open book covers, compact search and a personal note.
+
+- Display Google Books covers in search results and the demonstration shelf, with illustrated fallbacks for unavailable images.
+
+- Default to a charcoal reading interface with a compact search introduction and featured demonstration book.
+
+- Update the brand image and browser icon.
+- Use Google Books for title, author and ISBN search with a server-side API key.
+
+- Separate book catalog integration from HTTP handling and share the search result type with the reader interface.
 - Refresh the default reading surface with a cool palette and more direct diary copy.
 - Restore Fraunces for headings and use Bricolage Grotesque for interface text.
 - Add reader-selectable light and dark color palettes, explore Bricolage Grotesque in headings and navigation, and refine book cover shadows.
@@ -15,8 +33,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Apply the saved appearance before the page first renders to prevent a theme flash.
+
 - Keep the landing illustration visible behind the header across appearance palettes.
 - Preserve readable heading and navigation colors over the light illustration in dark mode.
+- Reject malformed catalog response envelopes instead of treating them as empty search results.
 - Preserve the font import URL when formatting global styles.
 - Align book authors and ratings across each row of the reading shelf.
 - Pin direct dependency versions and document runtime activation and the verification command.
@@ -26,6 +47,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Avoid a browser global name collision that prevented prototype layouts from rendering.
 
 ### Added
+
+- Offer a persistent light mode for the original yellow reading theme.
+
 
 - Explore a watercolor reading scene on the home page.
 - Add a subtle spine, edge thickness and grounded shadows to book covers.
