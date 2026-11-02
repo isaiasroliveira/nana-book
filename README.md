@@ -66,6 +66,8 @@ Run `pnpm db:migrate` before starting the application. Migrations run in a trans
 
 The diary uses one current evaluation per reader and edition. Ratings range from 0.5 to 5 stars. Opinions are optional plain text, limited to 5,000 characters, and can be marked as spoilers. Editing updates the existing evaluation. Private API responses use `private, no-store` caching, and ownership comes from the authenticated session.
 
+The application requires new and reset passwords to contain at least 12 characters, including uppercase and lowercase letters, a digit and a punctuation mark or symbol. Existing passwords remain valid for sign-in. These rules are enforced by the application authentication proxy; the managed Neon Auth endpoint is separately accessible, so provider-level enforcement must be verified before relying on this policy as a universal restriction.
+
 ## Experimental book search
 
 Book search uses [Google Books](https://developers.google.com/books/docs/v1/using). Set `GOOGLE_BOOKS_API_KEY` in `.env.local` using a Google Cloud project with the Books API enabled, and restart the application. The key is used only on the server. Remove the obsolete `OPEN_LIBRARY_CONTACT_EMAIL` setting.

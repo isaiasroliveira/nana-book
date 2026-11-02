@@ -27,6 +27,9 @@ export function Diary() {
   const [error, setError] = useState("");
   const [retryCursor, setRetryCursor] = useState<string | null>(null);
   const [selection, setSelection] = useState<{ book: BookResult; review?: Review } | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const readerId = useRef<string | null | undefined>(undefined);
   const sessionRequest = useRef<AbortController | null>(null);
   const reviewRequest = useRef<AbortController | null>(null);
@@ -37,6 +40,8 @@ export function Diary() {
     setNextCursor(null);
     setRetryCursor(null);
     setSelection(null);
+    setDeleting(null);
+    setDeleteError("");
     setError("");
     setLoading(false);
   }, []);
@@ -103,6 +108,23 @@ export function Diary() {
     if (user) void loadReviews();
   }, [user, loadReviews]);
 
+  async function deleteReview(id: string) {
+    if (!user) return;
+    setDeleteBusy(true);
+    setDeleteError("");
+    try {
+      const response = await fetch(`/api/reviews?id=${encodeURIComponent(id)}`, {
+        method: "DELETE", headers: { "X-Expected-User-Id": user.id }, signal: AbortSignal.timeout(15000),
+      });
+      if (!response.ok) throw new Error();
+      setDeleting(null);
+      setReviews(current => current.filter(review => review.id !== id));
+      if (selection?.review?.id === id) setSelection(null);
+      await loadReviews();
+    } catch { setDeleteError("Não foi possível excluir sua avaliação. Tente novamente."); }
+    finally { setDeleteBusy(false); }
+  }
+
   const latestBook = books[0];
   return (
     <>
@@ -151,6 +173,12 @@ export function Diary() {
               {review.containsSpoilers && <p className="spoiler-label">Contém spoilers</p>}
               {review.opinion && <p className="review-opinion">{review.opinion}</p>}
               <button type="button" className="text-button" onClick={() => { setAccountChanged(false); setSelection({ book: review.book ?? { id: review.volumeId, title: "Edição indisponível no catálogo", authors: [], source: "Google Books" }, review }); }}>Editar avaliação</button>
+              {deleting === review.id ? <div role="group" aria-label="Confirmar exclusão da avaliação">
+                <p>Excluir esta avaliação?</p>
+                <button type="button" className="text-button" disabled={deleteBusy} onClick={() => { void deleteReview(review.id); }}>{deleteBusy ? "Excluindo…" : "Confirmar exclusão"}</button>{" "}
+                <button type="button" className="text-button" disabled={deleteBusy} onClick={() => { setDeleting(null); setDeleteError(""); }}>Cancelar</button>
+                {deleteError && <p role="alert">{deleteError}</p>}
+              </div> : <button type="button" className="text-button" onClick={() => { setDeleting(review.id); setDeleteError(""); }}>Excluir avaliação</button>}
             </div>
           </article>)}
         </div>

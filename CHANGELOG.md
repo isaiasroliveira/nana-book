@@ -57,6 +57,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Add a password recovery flow through Neon Auth.
+- Require and display password rules when creating or resetting a password.
+- Allow readers to delete their own private evaluations after confirmation.
+- Confirm account emails with a verification code and allow requesting a new code.
+
 - Add Neon Auth sign-up, sign-in, session restoration and sign-out for private reading diaries.
 - Save half-star ratings, optional opinions and spoiler markers; revise evaluations without duplicates.
 - Add normalized PostgreSQL persistence with ownership constraints, atomic saves and stable diary pagination.

@@ -60,11 +60,21 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
       window.hasMore = localStorage.getItem('pagination-fixture') === 'yes';
       const book = { id: 'volume-1', source: 'Google Books', title: 'Torto Arado', authors: ['Itamar Vieira Junior'], publisher: 'Todavia', publishedDate: '2019', language: 'pt', isbn: '9786580309313' };
       window.fetch = async (input, options = {}) => {
-        const url = new URL(typeof input === 'string' ? input : input.url, location.origin);
+        const url = new URL(input instanceof Request ? input.url : String(input), location.origin);
+        if (url.pathname === '/api/auth/get-session') return Response.json(null);
+        if (url.pathname === '/api/auth/sign-up/email') return Response.json({ user: { id: 'new-reader', email: 'reader@example.test', name: 'Reader' }, token: null });
+        if (url.pathname === '/api/auth/email-otp/send-verification-otp') { window.codeRequests = (window.codeRequests || 0) + 1; return Response.json({ success: true }); }
+        if (url.pathname === '/api/auth/email-otp/verify-email') return window.rejectCode ? Response.json({ message: 'Invalid code', code: 'INVALID_OTP' }, { status: 400 }) : Response.json({ status: true, token: null, user: { id: 'new-reader', email: 'reader@example.test', emailVerified: true } });
         if (url.pathname === '/api/session') return Response.json({ user: { id: window.sessionReader || 'reader-1', name: 'Marina', email: 'reader@example.test' } });
         if (url.pathname === '/api/books') return Response.json({ books: [book] });
         if (url.pathname === '/api/reviews') {
           const reviews = window.sessionReader === 'reader-2' ? [] : JSON.parse(localStorage.getItem('review-fixture') || '[]');
+          if (options.method === 'DELETE') {
+            if (window.failDelete) { window.failDelete = false; return Response.json({ error: 'Falha' }, { status: 503 }); }
+            localStorage.setItem('review-fixture', JSON.stringify(reviews.filter(review => review.id !== url.searchParams.get('id'))));
+            return Response.json({ deleted: true });
+          }
+          if (window.failReviewReload) { window.failReviewReload = false; return Response.json({ error: 'Falha ao carregar' }, { status: 503 }); }
           if ((options.method || 'GET') === 'POST') {
             window.saveRequests = (window.saveRequests || 0) + 1;
             window.hasMore = false;
@@ -208,6 +218,30 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
       await page("Page.reload");
       await waitFor("document.querySelector('[aria-label=\"Última leitura avaliada\"]')?.textContent.includes('Uma leitura para lembrar.')");
       assert.match(await evaluate("document.querySelector('[aria-label=\"Última leitura avaliada\"]').textContent"), /Edição indisponível no catálogo/);
+    });
+    await t.test("deleting an evaluation requires confirmation and allows retry", async () => {
+      await evaluate("Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Excluir avaliação').click(); window.failDelete = true");
+      await waitFor("Array.from(document.querySelectorAll('button')).some(button => button.textContent === 'Confirmar exclusão')");
+      await evaluate("Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Confirmar exclusão').click()");
+      await waitFor("document.querySelector('[role=alert]')?.textContent.includes('Não foi possível excluir')");
+      assert.equal(await evaluate("!!document.querySelector('.diary-readings [data-review-id]')"), true);
+      await evaluate("window.failReviewReload = true; Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Confirmar exclusão').click()");
+      await waitFor("!document.querySelector('.diary-readings [data-review-id]') && !document.querySelector('[aria-label=\"Última leitura avaliada\"]')");
+    });
+    await t.test("signup offers email code confirmation", async () => {
+      await page("Page.navigate", { url: (process.env.TEST_BASE_URL || "http://localhost:3000") + "/auth/sign-in" });
+      await waitFor("Array.from(document.querySelectorAll('button')).some(button => button.textContent === 'Criar uma conta')");
+      await evaluate("Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Criar uma conta').click()");
+      await waitFor("!!document.querySelector('input[name=name]')");
+      await evaluate(`(() => { for (const [name,value] of [['name','Reader'],['email','reader@example.test'],['password','SecurePass123!']]) { const input = document.querySelector('input[name='+name+']'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input,value); input.dispatchEvent(new Event('input',{bubbles:true})); } })()`);
+      await evaluate("document.querySelector('form').requestSubmit()");
+      await waitFor("!!document.querySelector('input[autocomplete=one-time-code]:not(:disabled)')");
+      await evaluate(`(() => { window.rejectCode = true; const input = document.querySelector('input[autocomplete=one-time-code]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, '123456'); input.dispatchEvent(new Event('input',{bubbles:true})); document.querySelector('form').requestSubmit(); })()`);
+      await waitFor("document.body.innerText.includes('Código inválido ou expirado')");
+      await evaluate("window.rejectCode = false; Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Enviar outro código').click()");
+      await waitFor("window.codeRequests === 2");
+      await evaluate("document.querySelector('form').requestSubmit()");
+      await waitFor("document.body.innerText.includes('E-mail confirmado')");
     });
 
   } finally {

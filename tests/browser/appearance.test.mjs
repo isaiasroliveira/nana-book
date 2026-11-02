@@ -136,6 +136,12 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await evaluate(`(() => { const mode = document.querySelectorAll('select')[1]; mode.value = 'dark'; mode.dispatchEvent(new Event('change', {bubbles:true})); })()`);
     await waitFor("!document.documentElement.dataset.mode");
     assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(37, 37, 31)");
+    await page("Emulation.setDeviceMetricsOverride", { width: 393, height: 852, deviceScaleFactor: 1, mobile: true });
+    await page("Page.navigate", { url: `${process.env.TEST_BASE_URL || "http://localhost:3000"}/auth/reset-password?token=test` });
+    await waitFor("!!document.querySelector('input[name=password]')");
+    assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true, "password recovery fits a mobile screen");
+    assert.equal(await evaluate("document.querySelectorAll('.password-requirements li').length"), 5);
+    assert.equal(await evaluate("document.querySelector('button').getBoundingClientRect().height >= 48"), true);
   } finally {
     socket?.close();
     chrome.kill();
