@@ -12,9 +12,15 @@
     "typecheck": "tsc --noEmit",
     "verify": "pnpm test && pnpm typecheck && pnpm build",
     "test": "tsx --test tests/*.test.tsx",
-    "test:browser": "node --test --test-timeout=45000 tests/browser/*.test.mjs"
+    "test:browser": "node --test --test-timeout=45000 tests/browser/*.test.mjs",
+    "test:integration": "node --test tests/integration/*.test.mjs",
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs"
   },
   "dependencies": {
+    "@neon/auth": "0.8.2",
+    "@neon/config": "^1.10.0",
+    "@neon/env": "^1.6.8",
+    "@neondatabase/serverless": "1.2.0",
     "lucide-react": "1.63.0",
     "next": "16.4.3",
     "react": "19.3.1",
