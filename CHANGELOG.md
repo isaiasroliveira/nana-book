@@ -79,6 +79,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Let readers resume email code confirmation after reloading and preserve the code already sent by Neon after signup.
 - Reconcile the diary when a deletion succeeded but its response was lost.
 
 - Keep older diary responses from overwriting refreshed readings, and prevent an open review from being saved under a switched account.

@@ -244,10 +244,22 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
       await evaluate(`(() => { for (const [name,value] of [['name','Reader'],['email','reader@example.test'],['password','SecurePass123!']]) { const input = document.querySelector('input[name='+name+']'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input,value); input.dispatchEvent(new Event('input',{bubbles:true})); } })()`);
       await evaluate("document.querySelector('form').requestSubmit()");
       await waitFor("!!document.querySelector('input[autocomplete=one-time-code]:not(:disabled)')");
+      assert.equal(await evaluate("window.codeRequests || 0"), 0, "signup keeps the code Neon already sent instead of requesting a replacement");
       await evaluate(`(() => { window.rejectCode = true; const input = document.querySelector('input[autocomplete=one-time-code]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, '123456'); input.dispatchEvent(new Event('input',{bubbles:true})); document.querySelector('form').requestSubmit(); })()`);
       await waitFor("document.body.innerText.includes('Código inválido ou expirado')");
       await evaluate("window.rejectCode = false; Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Enviar outro código').click()");
-      await waitFor("window.codeRequests === 2");
+      await waitFor("window.codeRequests === 1");
+      await waitFor("!document.querySelector('input[autocomplete=one-time-code]').disabled");
+      await evaluate("document.querySelector('form').requestSubmit()");
+      await waitFor("document.body.innerText.includes('E-mail confirmado')");
+    });
+
+    await t.test("readers can enter an existing verification code after reloading", async () => {
+      await page("Page.navigate", { url: (process.env.TEST_BASE_URL || "http://localhost:3000") + "/auth/sign-in" });
+      await waitFor("Array.from(document.querySelectorAll('button')).some(button => button.textContent === 'Já tenho um código de confirmação')");
+      await evaluate("Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Já tenho um código de confirmação').click()");
+      await waitFor("!!document.querySelector('input[autocomplete=one-time-code]:not(:disabled)')");
+      await evaluate(`(() => { for (const [name,value] of [['email','reader@example.test'],['code','123456']]) { const input = document.querySelector('input[name='+name+']'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input,value); input.dispatchEvent(new Event('input',{bubbles:true})); } })()`);
       await evaluate("document.querySelector('form').requestSubmit()");
       await waitFor("document.body.innerText.includes('E-mail confirmado')");
     });
