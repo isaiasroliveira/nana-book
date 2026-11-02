@@ -1,3 +1,33 @@
+/* Default appearance follows the mascot's warm yellow on charcoal. */
+:root {
+  --paper:#25251f;
+  --surface:#303029;
+  --ink:#f5f2e9;
+  --muted:#b6b3aa;
+  --line:#49493d;
+  --review:#303029;
+  --note-paper:#e6dfbd;
+  --note-ink:#383b2c;
+  --accent:#f5c94f;
+  --action:#f5c94f;
+  --action-text:#252213;
+  color-scheme:dark;
+}
+:root[data-mode="light"] { color-scheme:light; }
+:root:not([data-palette])[data-mode="light"],
+:root[data-palette=""][data-mode="light"] {
+  --paper:#ffffff;
+  --surface:#ffffff;
+  --ink:#303030;
+  --muted:#606060;
+  --line:#d8d8d8;
+  --review:#f5edce;
+  --note-paper:#f0eee4;
+  --note-ink:#383838;
+  --accent:#80601a;
+  --action:#f5c94f;
+  --action-text:#252213;
+}
 :root[data-palette="petrol"]  {
    --paper:#f1f5f5;
    --ink:#19363d;
@@ -78,13 +108,6 @@
 }
 [data-palette] .nav  {
    color:var(--muted);
-}
-/* The illustration stays light in every appearance mode. */
-.top .brand, .top .nav .active, .top .appearance-settings summary, .hero .heading {
-   color:#243b3a;
-}
-.top .nav, [data-palette] .top .nav, .hero .sub {
-   color:#526967;
 }
 [data-palette] .button, [data-palette] .avatar  {
    background:var(--action);

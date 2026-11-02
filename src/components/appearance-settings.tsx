@@ -6,7 +6,7 @@ import { readAppearance, saveAppearance, type Palette, type Mode } from "../serv
 
 export function AppearanceSettings() {
   const [palette, setPalette] = useState<Palette | "">("");
-  const [mode, setMode] = useState<Mode>("light");
+  const [mode, setMode] = useState<Mode>("dark");
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -22,15 +22,14 @@ export function AppearanceSettings() {
 
   useEffect(() => {
     if (!loaded) return;
-    if (palette) {
-      document.documentElement.dataset.palette = palette;
-      document.documentElement.dataset.mode = mode;
-      try { saveAppearance(localStorage, { palette, mode }); } catch { /* Keep the current choice for this visit. */ }
-    } else {
-      delete document.documentElement.dataset.palette;
-      delete document.documentElement.dataset.mode;
-      try { saveAppearance(localStorage, null); } catch { /* Storage may be unavailable. */ }
-    }
+    if (palette) document.documentElement.dataset.palette = palette;
+    else delete document.documentElement.dataset.palette;
+    if (palette || mode === "light") document.documentElement.dataset.mode = mode;
+    else delete document.documentElement.dataset.mode;
+    try {
+      saveAppearance(localStorage, palette || mode === "light" ? { palette, mode } : null);
+    } catch { /* Keep the current choice for this visit. */ }
+
   }, [loaded, palette, mode]);
 
   return <details className="appearance-settings">
@@ -45,7 +44,7 @@ export function AppearanceSettings() {
         </select>
       </label>
       <label>Modo
-        <select value={mode} onChange={event => { setMode(event.target.value as Mode); if (!palette) setPalette("petrol"); }}>
+        <select value={mode} onChange={event => setMode(event.target.value as Mode)}>
           <option value="light">Claro</option>
           <option value="dark">Escuro</option>
         </select>

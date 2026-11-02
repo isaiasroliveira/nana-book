@@ -58,17 +58,21 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     }
     await page("Page.navigate", { url: process.env.TEST_BASE_URL || "http://localhost:3000" });
     await waitFor("!!document.querySelector('summary')");
+    assert.equal(await evaluate("!!document.querySelector('.featured-cover img[alt]')"), true);
+    assert.equal(await evaluate("document.querySelector('#search-heading').textContent"), "Avaliar um livro");
+
+    assert.match(await evaluate("document.querySelector('.brand img').getAttribute('src')"), /nana-book/);
+    assert.ok(await evaluate("!!document.querySelector('link[rel=icon]')"));
     await new Promise(resolve => setTimeout(resolve, 500));
     for (const width of [390, 768, 1440]) {
       await page("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
       for (const palette of ["", "petrol", "sage", "rose"]) {
         for (const mode of ["light", "dark"]) {
           await evaluate(`Object.assign(document.documentElement.dataset, ${JSON.stringify({ palette, mode })})`);
-          assert.equal(await evaluate("getComputedStyle(document.querySelector('.top')).backgroundColor"), "rgba(0, 0, 0, 0)", `${width}: ${palette || "original"} ${mode}`);
-          assert.match(await evaluate("getComputedStyle(document.querySelector('.landing-art')).backgroundImage"), /nana-books-hero\.jpg/);
-          for (const selector of [".hero .heading", ".brand", ".appearance-settings summary", ".nav .active"]) {
-            assert.equal(await evaluate(`getComputedStyle(document.querySelector(${JSON.stringify(selector)})).color`), "rgb(36, 59, 58)", `${palette} ${mode}: ${selector}`);
-          }
+          assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true, `${width}: no horizontal overflow`);
+          assert.equal(await evaluate("document.querySelector('.landing-art')"), null);
+          assert.equal(await evaluate("getComputedStyle(document.querySelector('.hero .heading')).color === getComputedStyle(document.body).color"), true);
+
         }
       }
     }
@@ -92,13 +96,32 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     assert.equal(await evaluate("document.activeElement.labels[0].textContent.trim().startsWith('Paleta')"), true);
     assert.notEqual(await evaluate("getComputedStyle(document.activeElement).outlineStyle"), "none");
     await evaluate(`(() => { const selects = document.querySelectorAll('select'); selects[0].value = 'petrol'; selects[0].dispatchEvent(new Event('change', {bubbles:true})); selects[1].value = 'dark'; selects[1].dispatchEvent(new Event('change', {bubbles:true})); })()`);
-    await waitFor("document.documentElement.dataset.palette === 'petrol' && document.documentElement.dataset.mode === 'dark'");
+    await waitFor("document.documentElement?.dataset.palette === 'petrol' && document.documentElement.dataset.mode === 'dark'");
     await page("Page.reload");
-    await waitFor("document.documentElement.dataset.palette === 'petrol' && document.documentElement.dataset.mode === 'dark'");
+    await waitFor("document.documentElement?.dataset.palette === 'petrol' && document.documentElement.dataset.mode === 'dark'");
+    await waitFor("document.querySelector('select')?.value === 'petrol'");
     await evaluate("document.querySelector('details').open = true; document.querySelector('select').focus()");
     await evaluate(`(() => { const select = document.querySelector('select'); select.value = ''; select.dispatchEvent(new Event('change', {bubbles:true})); })()`);
     await waitFor("!document.documentElement.dataset.palette");
     assert.equal(await evaluate("localStorage.getItem('nana-appearance')"), null);
+    await evaluate(`(() => { const mode = document.querySelectorAll('select')[1]; mode.value = 'light'; mode.dispatchEvent(new Event('change', {bubbles:true})); })()`);
+    await waitFor("document.documentElement?.dataset.mode === 'light'");
+    assert.equal(await evaluate("document.documentElement.dataset.palette"), undefined);
+    assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(255, 255, 255)");
+    assert.equal(await evaluate("getComputedStyle(document.querySelector('.hero-card')).backgroundColor"), "rgb(245, 237, 206)");
+    await page("Network.enable");
+    await page("Network.setBlockedURLs", { urls: ["*/_next/static/chunks/*.js*", "*/_next/static/chunks/**/*.js*"] });
+    await page("Page.reload");
+    await waitFor("document.documentElement?.dataset.mode === 'light'");
+    assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(255, 255, 255)");
+    await page("Network.setBlockedURLs", { urls: [] });
+    await page("Page.reload");
+    await waitFor("document.documentElement?.dataset.mode === 'light'");
+    await waitFor("document.querySelectorAll('select')[1]?.value === 'light'");
+    assert.equal(await evaluate("document.querySelector('select').value"), "");
+    await evaluate(`(() => { const mode = document.querySelectorAll('select')[1]; mode.value = 'dark'; mode.dispatchEvent(new Event('change', {bubbles:true})); })()`);
+    await waitFor("!document.documentElement.dataset.mode");
+    assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(37, 37, 31)");
   } finally {
     socket?.close();
     chrome.kill();

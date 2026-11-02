@@ -9,3 +9,9 @@ test("book cover preserves readable identity and author", () => {
   assert.match(html, /<strong>Torto arado<\/strong>/);
   assert.match(html, /<small>Itamar Vieira Junior<\/small>/);
 });
+
+ test("book cover displays the supplied catalog image", () => {
+  const html = renderToStaticMarkup(<BookCover book={{ title: "Torto arado", author: "Itamar Vieira Junior", color: "#a75336", art: "◉", coverUrl: "https://books.google.com/books/content?id=example" }} />);
+  assert.match(html, /<img/);
+  assert.match(html, /alt="Capa de Torto arado"/);
+});

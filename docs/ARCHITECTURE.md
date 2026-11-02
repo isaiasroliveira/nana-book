@@ -2,7 +2,7 @@
 
 ## Status
 
-Nana Books is in planning. Next.js and TypeScript are adopted for the application. The initial App Router home page implements the approved diary layout with demonstration data. Authentication, persistence and sharing are not implemented. The application lives in `src/app`, reusable UI in `src/components`, and public assets in `public`. Google Books is adopted for interactive book discovery; deployment remains open.
+Nana Book is in planning. Next.js and TypeScript are adopted for the application. The initial App Router home page implements the approved diary layout with demonstration data. Authentication, persistence and sharing are not implemented. The application lives in `src/app`, reusable UI in `src/components`, and public assets in `public`. Google Books is adopted for interactive book discovery; deployment remains open.
 
 ## Adopted application stack
 

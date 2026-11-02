@@ -86,3 +86,17 @@ test("search fails safely if the API key is missing", async (context) => {
   const response = await GET(new Request("http://localhost/api/books?q=livro"));
   assert.equal(response.status, 502);
 });
+
+ test("search exposes HTTPS cover images and ignores unsafe image URLs", async (context) => {
+  for (const [thumbnail, expected] of [["http://books.google.com/books/content?id=volume", "https://books.google.com/books/content?id=volume"], ["javascript:alert(1)", undefined]]) {
+    context.mock.method(globalThis, "fetch", async () => Response.json({ items: [{ id: "volume", volumeInfo: { title: "Livro", imageLinks: { thumbnail } } }] }));
+    const response = await GET(new Request("http://localhost/api/books?q=livro"));
+    assert.equal((await response.json()).books[0].coverUrl, expected);
+  }
+});
+
+test("search prefers the available medium cover over thumbnails", async (context) => {
+  context.mock.method(globalThis, "fetch", async () => Response.json({ items: [{ id: "book", volumeInfo: { title: "Livro", imageLinks: { medium: "https://books.google.com/medium", thumbnail: "https://books.google.com/thumbnail" } } }] }));
+  const response = await GET(new Request("http://localhost/api/books?q=livro"));
+  assert.equal((await response.json()).books[0].coverUrl, "https://books.google.com/medium");
+});

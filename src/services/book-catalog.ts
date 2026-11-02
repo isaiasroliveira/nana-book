@@ -3,6 +3,7 @@ export type BookResult = {
   source: string;
   title: string;
   authors: string[];
+  coverUrl?: string;
   isbn?: string;
   publisher?: string;
   language?: string;
@@ -11,6 +12,16 @@ export type BookResult = {
 
 function text(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
+}
+
+function coverUrl(value: unknown): string | undefined {
+  if (typeof value !== "string") return;
+  try {
+    const url = new URL(value);
+    if (!["http:", "https:"].includes(url.protocol)) return;
+    url.protocol = "https:";
+    return url.href;
+  } catch { return; }
 }
 
 export async function searchBooks(query: string): Promise<BookResult[]> {
@@ -45,6 +56,10 @@ export async function searchBooks(query: string): Promise<BookResult[]> {
       authors: Array.isArray(info.authors)
         ? info.authors.filter((author): author is string => typeof author === "string")
         : [],
+      coverUrl: coverUrl((info.imageLinks as Record<string, unknown> | undefined)?.medium)
+        ?? coverUrl((info.imageLinks as Record<string, unknown> | undefined)?.small)
+        ?? coverUrl((info.imageLinks as Record<string, unknown> | undefined)?.thumbnail)
+        ?? coverUrl((info.imageLinks as Record<string, unknown> | undefined)?.smallThumbnail),
       publisher: text(info.publisher),
       publishedDate: text(info.publishedDate),
       language: text(info.language),

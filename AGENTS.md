@@ -1,4 +1,4 @@
-# Nana Books
+# Nana Book
 
 Read [architecture](docs/ARCHITECTURE.md) and [coding standards](docs/CODING_STANDARDS.md) before changing the project. The architecture is an initial direction; do not treat open decisions as implemented.
 

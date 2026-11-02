@@ -26,7 +26,7 @@ Proposed flow: save the evaluation, preview the share image, then share or save 
 
 Personal shelves and curated collections can support discovery alongside reviews. Social feeds, reactions and copying collections are optional future directions, not approved requirements.
 
-## Proposals for Nana Books
+## Proposals for Nana Book
 
 - Preserve the approved diary layout and a short path from search to reading registration.
 - Keep ratings independent of review text and make the evaluation preview explicit before sharing.
