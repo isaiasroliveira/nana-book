@@ -23,3 +23,11 @@ Test search and evaluation through the reader-facing interface. Inspect mobile a
 ## Out of scope
 
 New catalog providers, social features and a wholesale component library migration.
+
+## Latest evaluated book
+
+Show the authenticated reader's most recently created evaluation in the existing featured-reading layout. Display its cover, title, authors, rating, and a short excerpt of the opinion when present. Mark spoiler content without displaying its excerpt. When catalog data is unavailable, retain the rating and opinion with an edition-unavailable fallback. Readers without evaluations keep the existing empty state.
+
+The diary already orders evaluations by creation time, so revising an older evaluation does not change which book was evaluated most recently. Reload the featured content after a save and clear it when the authenticated reader changes.
+
+Validation: exercise the reader-facing diary after saving, after reloading, with no opinion, with spoilers, and after an account change. Inspect the featured layout on mobile and desktop. Tracked in GitHub issue #28.

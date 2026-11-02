@@ -88,15 +88,34 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
     await waitFor("document.querySelector('.search-results')?.textContent.includes('Torto Arado')");
     assert.equal(await evaluate("Array.from(document.querySelectorAll('.search-results button')).some(button => /Avaliar esta edição/.test(button.textContent))"), true, "search results let the reader select an edition");
     await evaluate("Array.from(document.querySelectorAll('.search-results button')).find(button => /Avaliar esta edição/.test(button.textContent)).click()");
-    await waitFor("!!document.querySelector('.review-form select[name=ratingUnits]') && !document.querySelector('.review-form fieldset').disabled");
+    await waitFor("!!document.querySelector('.rating-control input') && !document.querySelector('.review-form fieldset').disabled");
+    assert.equal(await evaluate("!!document.querySelector('.review-form select[name=ratingUnits]')"), false, "stars are the only rating control");
+    await evaluate("document.querySelector('.review-form input[name=confirmed]').click(); document.querySelector('.review-form').requestSubmit()");
+    await waitFor("document.querySelector('#review-editor').innerText.includes('Escolha uma nota')");
+    assert.equal(await evaluate("window.saveRequests || 0"), 0, "saving requires a rating");
+    await evaluate("document.querySelector('.rating-control input').focus()");
+    await page("Input.dispatchKeyEvent", { type: "keyDown", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39 });
+    await page("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39 });
+    assert.equal(await evaluate("document.querySelector('.rating-control input').value"), "1", "keyboard selects a half star");
+    const slider = await evaluate("(() => { const r = document.querySelector('.rating-control input').getBoundingClientRect(); return { x: r.x, y: r.y + r.height / 2, width: r.width }; })()");
+    await page("Input.dispatchMouseEvent", { type: "mousePressed", x: slider.x + 20, y: slider.y, button: "left", clickCount: 1 });
+    await page("Input.dispatchMouseEvent", { type: "mouseMoved", x: slider.x + slider.width - 2, y: slider.y, button: "left", buttons: 1 });
+    await page("Input.dispatchMouseEvent", { type: "mouseReleased", x: slider.x + slider.width - 2, y: slider.y, button: "left", clickCount: 1 });
+    assert.equal(await evaluate("document.querySelector('.rating-control input').value"), "10", "dragging selects five stars");
     assert.match(await evaluate("document.querySelector('#review-editor').innerText"), /Torto Arado/);
-    await evaluate("document.querySelector('.review-form input[name=confirmed]').click(); const rating = document.querySelector('.review-form select[name=ratingUnits]'); rating.value = '9'; rating.dispatchEvent(new Event('change', {bubbles:true})); window.failReviewSave = true");
+    await evaluate("document.querySelector('.rating-control input').focus(); window.failReviewSave = true");
+    await page("Input.dispatchKeyEvent", { type: "keyDown", key: "ArrowLeft", code: "ArrowLeft", windowsVirtualKeyCode: 37 });
+    await page("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowLeft", code: "ArrowLeft", windowsVirtualKeyCode: 37 });
     await evaluate("document.querySelector('.review-form').requestSubmit()");
     await waitFor("document.querySelector('#review-editor').innerText.includes('Não foi possível salvar')");
-    assert.equal(await evaluate("document.querySelector('.review-form select[name=ratingUnits]').value"), '9', 'failed save preserves half-star input');
+    assert.equal(await evaluate("document.querySelector('.rating-control input').value"), '9', 'failed save preserves half-star input');
     assert.equal(await evaluate("document.querySelector('.review-form input[name=confirmed]').checked"), true);
     await evaluate("document.querySelector('.review-form').requestSubmit()");
     await waitFor("document.querySelector('.diary-readings')?.innerText.includes('Torto Arado')");
+    await waitFor("document.querySelector('[aria-label=\"Última leitura avaliada\"]')?.textContent.includes('Torto Arado')");
+    assert.equal(await evaluate("!!document.querySelector('[aria-label=\"Última leitura avaliada\"] [aria-label=\"4,5 de 5 estrelas\"]')"), true);
+    assert.match(await evaluate("document.querySelector('[aria-label=\"Última leitura avaliada\"]').textContent"), /ainda não escreveu uma opinião/);
+    assert.equal(await evaluate("!!document.querySelector('#review-editor a[href=\"#readings\"]')"), true, "saving offers a path to the diary");
     assert.equal(await evaluate("document.querySelectorAll('.diary-readings [data-review-id]').length"), 1);
     assert.equal(await evaluate("JSON.parse(localStorage.getItem('review-fixture'))[0].ratingUnits"), 9);
     await page("Page.reload");
@@ -105,7 +124,7 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
     await evaluate("Array.from(document.querySelectorAll('.diary-readings button')).find(button => /Editar avaliação/.test(button.textContent)).click()");
     await waitFor("!!document.querySelector('.review-form')");
     assert.equal(await evaluate("!!document.querySelector('.review-form textarea[name=opinion]')"), true, 'reader can write an optional opinion');
-    assert.equal(await evaluate("document.querySelector('.review-form select[name=ratingUnits]').value"), '9', 'editing restores the saved rating');
+    assert.equal(await evaluate("document.querySelector('.rating-control input').value"), '9', 'editing restores the saved rating');
     const opinion = '  Uma história que continua comigo.  ';
     await evaluate(`(() => { const field = document.querySelector('.review-form textarea[name=opinion]'); Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(field, ${JSON.stringify(opinion)}); field.dispatchEvent(new Event('input', {bubbles:true})); document.querySelector('.review-form input[name=containsSpoilers]').click(); window.failReviewSave = true; })()`);
     await evaluate("document.querySelector('.review-form').requestSubmit()");
@@ -114,9 +133,12 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
     assert.equal(await evaluate("document.querySelector('.review-form input[name=containsSpoilers]').checked"), true);
     await evaluate("document.querySelector('.review-form').requestSubmit()");
     await waitFor("document.querySelector('.diary-readings')?.textContent.includes('Uma história que continua comigo.')");
+    await waitFor("document.querySelector('[aria-label=\"Última leitura avaliada\"]')?.textContent.includes('contém spoilers')");
+    assert.equal(await evaluate("document.querySelector('[aria-label=\"Última leitura avaliada\"]').textContent.includes('Uma história que continua comigo.')"), false, 'featured excerpt hides spoilers');
     assert.match(await evaluate("document.querySelector('.diary-readings').textContent"), /spoilers/i);
     await page("Page.reload");
     await waitFor("document.querySelector('.diary-readings')?.textContent.includes('Uma história que continua comigo.')");
+    assert.equal(await evaluate("!!document.querySelector('[aria-label=\"Última leitura avaliada\"]')"), true, 'featured reading survives reload');
     assert.equal(await evaluate("document.querySelectorAll('.diary-readings [data-review-id]').length"), 1, 'revising keeps one evaluation');
     assert.equal(await evaluate("document.querySelector('.diary-readings [data-review-id]').dataset.reviewId"), 'review-1');
     await evaluate("Array.from(document.querySelectorAll('.diary-readings button')).find(button => /Editar avaliação/.test(button.textContent)).click()");
@@ -127,6 +149,12 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
     for (const width of [390, 768, 1440]) {
       await page("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
       assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true, `${width}: no horizontal overflow`);
+      if (width === 390) {
+        await evaluate("document.querySelector('.review-form textarea').focus()");
+        assert.equal(await evaluate("getComputedStyle(document.querySelector('.nav')).visibility"), "hidden", "navigation clears the writing area");
+        await evaluate("document.querySelector('.review-form textarea').blur()");
+        assert.equal(await evaluate("getComputedStyle(document.querySelector('.nav')).visibility"), "visible", "navigation returns after writing");
+      }
       if (width !== 768) {
         const screenshot = await page("Page.captureScreenshot", { format: 'png', captureBeyondViewport: true });
         await writeFile(join(tmpdir(), `nana-reviews-${width}.png`), Buffer.from(screenshot.data, 'base64'));
@@ -164,6 +192,7 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
       await new Promise(resolve => setTimeout(resolve, 500));
       assert.equal(await evaluate("!!document.querySelector('.review-form')"), false, 'account change clears the previous reader form');
       assert.equal(await evaluate("document.querySelectorAll('.diary-readings [data-review-id]').length"), 0, 'account change clears previous reader notes');
+      assert.equal(await evaluate("!!document.querySelector('[aria-label=\"Última leitura avaliada\"]')"), false, 'account change clears featured reading');
     });
     await t.test("an account change immediately before save cannot copy another reader opinion", async () => {
       await page("Page.reload");
@@ -173,6 +202,12 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
       await evaluate("window.saveRequests = 0; window.sessionReader = 'reader-2'; document.querySelector('.review-form').requestSubmit()");
       await new Promise(resolve => setTimeout(resolve, 500));
       assert.equal(await evaluate("window.saveRequests"), 0, 'save rechecks identity before transmitting private input');
+    });
+    await t.test("featured reading keeps the opinion when catalog data is unavailable", async () => {
+      await evaluate("(() => { const reviews = JSON.parse(localStorage.getItem('review-fixture')); reviews[0].book = null; reviews[0].containsSpoilers = false; reviews[0].opinion = 'Uma leitura para lembrar.'; localStorage.setItem('review-fixture', JSON.stringify(reviews)); })()");
+      await page("Page.reload");
+      await waitFor("document.querySelector('[aria-label=\"Última leitura avaliada\"]')?.textContent.includes('Uma leitura para lembrar.')");
+      assert.match(await evaluate("document.querySelector('[aria-label=\"Última leitura avaliada\"]').textContent"), /Edição indisponível no catálogo/);
     });
 
   } finally {

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { BookResult } from "@/services/book-catalog";
+import { BookCover } from "./book-cover";
+import { Rating } from "./rating";
 
 export type Review = {
   id: string;
@@ -69,6 +71,10 @@ export function ReviewEditor({ book, initialReview, expectedUserId, onSaved, onC
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving || !ready || !confirmed) return;
+    if (!ratingUnits) {
+      setError("Escolha uma nota para salvar sua avaliação.");
+      return;
+    }
     setSaving(true);
     setError("");
     setStatus("");
@@ -103,19 +109,22 @@ export function ReviewEditor({ book, initialReview, expectedUserId, onSaved, onC
   return (
     <section id="review-editor" className="review-editor" aria-labelledby="review-heading">
       <h2 id="review-heading" ref={heading} tabIndex={-1}>Sua avaliação</h2>
+      <div className="review-book"><BookCover book={{ title: book.title, author: book.authors.join(", "), coverUrl: book.coverUrl, color: "#52675d", art: "" }} /><div>
       <h3>{book.title}</h3>
       <p className="sub">{book.authors.join(", ") || "Autoria não informada"}</p>
       <p className="book-author">{[book.publisher, book.publishedDate, book.language, book.isbn].filter(Boolean).join(" · ")}</p>
       <small>Fonte: {book.source}</small>
+      </div></div>
       {loading && <p role="status">Consultando sua avaliação…</p>}
       <form className="review-form" onSubmit={save} aria-busy={saving || loading}>
         <fieldset disabled={!ready || saving}>
           <label className="checkbox-label"><input type="checkbox" name="confirmed" required checked={confirmed} onChange={event => setConfirmed(event.target.checked)} />Confirmo que esta é a edição que li</label>
           <label htmlFor="rating-units">Sua nota</label>
-          <select id="rating-units" name="ratingUnits" required value={ratingUnits} onChange={event => setRatingUnits(event.target.value)}>
-            <option value="">Escolha uma nota</option>
-            {Array.from({ length: 10 }, (_, index) => index + 1).map(units => <option key={units} value={units}>{(units / 2).toLocaleString("pt-BR")} de 5 estrelas</option>)}
-          </select>
+          <div className="rating-control">
+            <div aria-hidden="true"><Rating value={Number(ratingUnits) / 2} /></div>
+            <input id="rating-units" name="ratingUnits" type="range" min="0" max="10" step="1" value={ratingUnits || "0"} aria-label="Sua nota em estrelas" aria-valuetext={ratingUnits ? `${(Number(ratingUnits) / 2).toLocaleString("pt-BR")} de 5 estrelas` : "Nenhuma nota selecionada"} onChange={event => { setRatingUnits(event.target.value === "0" ? "" : event.target.value); setError(""); }} />
+          </div>
+          <small className="book-author">{ratingUnits ? `${(Number(ratingUnits) / 2).toLocaleString("pt-BR")} de 5 estrelas` : "Toque ou arraste para escolher uma nota"}</small>
           <label htmlFor="review-opinion">Sua opinião (opcional)</label>
           <textarea id="review-opinion" name="opinion" maxLength={5000} rows={6} value={opinion} onChange={event => setOpinion(event.target.value)} aria-describedby="opinion-limit" />
           <small id="opinion-limit" className="book-author">Até 5.000 caracteres. Sua avaliação é privada.</small>
@@ -129,6 +138,7 @@ export function ReviewEditor({ book, initialReview, expectedUserId, onSaved, onC
       {error && <p role="alert">{error}</p>}
       {!loading && !ready && <button type="button" className="text-button" onClick={() => setRetry(retry + 1)}>Tentar consultar novamente</button>}
       <p role="status" aria-live="polite">{status}</p>
+      {status && <a className="shelf-link" href="#readings">Ver minhas leituras</a>}
     </section>
   );
 }

@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Feature the reader's latest private evaluation in the reading diary.
+- Highlight the selected book and add a draggable star control to the review editor.
 - Clarify book discovery and present search results in compact, responsive edition cards.
 - Give navigation a translucent surface and make reading links available on mobile.
 - Keep a compact glass navigation bar available on desktop and an app-style bottom navigation on mobile.
