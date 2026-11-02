@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Use the Nana Book app artwork for browser installation and iPhone home-screen icons.
+
 - Add a password recovery flow through Neon Auth.
 - Require and display password rules when creating or resetting a password.
 - Allow readers to delete their own private evaluations after confirmation.

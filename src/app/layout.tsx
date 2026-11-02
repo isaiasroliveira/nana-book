@@ -7,7 +7,10 @@ import "./appearance.css";
 export const metadata: Metadata = {
   title: "Nana Book | Seu diário de leitura",
   description: "Guarde suas leituras, avalie livros e compartilhe suas impressões.",
-  icons: "/nana-book.png",
+  icons: {
+    icon: "/nana-book.png",
+    apple: { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

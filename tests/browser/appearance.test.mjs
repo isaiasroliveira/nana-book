@@ -68,6 +68,8 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
 
     assert.match(await evaluate("document.querySelector('.brand img').getAttribute('src')"), /nana-book/);
     assert.ok(await evaluate("!!document.querySelector('link[rel=icon]')"));
+    assert.ok(await evaluate("!!document.querySelector('link[rel=manifest]')"), "browser installation can discover the app manifest");
+    assert.ok(await evaluate("!!document.querySelector('link[rel=apple-touch-icon]')"), "iPhone home-screen installation can discover the app artwork");
     await new Promise(resolve => setTimeout(resolve, 500));
     for (const width of [390, 768, 1440]) {
       await page("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
