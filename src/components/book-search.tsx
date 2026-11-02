@@ -5,7 +5,7 @@ import { BookCover } from "./book-cover";
 import { Search } from "lucide-react";
 import type { BookResult } from "@/services/book-catalog";
 
-export function BookSearch() {
+export function BookSearch({ onSelect }: { onSelect: (book: BookResult) => void }) {
   const [books, setBooks] = useState<BookResult[]>([]);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,6 +47,7 @@ export function BookSearch() {
           <p className="book-author">{[book.publisher, book.publishedDate, book.language].filter(Boolean).join(" · ")}</p>
           {book.isbn && <p className="book-author">ISBN: {book.isbn}</p>}
           <small>Fonte: {book.source}</small>
+          <button type="button" className="button" onClick={() => onSelect(book)}>Avaliar esta edição</button>
         </li>)}
       </ul>
     </section>

@@ -58,6 +58,7 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     }
     await page("Page.navigate", { url: process.env.TEST_BASE_URL || "http://localhost:3000" });
     await waitFor("!!document.querySelector('summary')");
+    await waitFor("!!document.querySelector('.featured-cover img[alt]')");
     assert.equal(await evaluate("!!document.querySelector('.featured-cover img[alt]')"), true);
     assert.equal(await evaluate("document.querySelector('#search-heading').textContent"), "Avaliar um livro");
 
@@ -108,6 +109,7 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await waitFor("document.documentElement?.dataset.mode === 'light'");
     assert.equal(await evaluate("document.documentElement.dataset.palette"), undefined);
     assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(255, 255, 255)");
+    await waitFor("!!document.querySelector('.hero-card')");
     assert.equal(await evaluate("getComputedStyle(document.querySelector('.hero-card')).backgroundColor"), "rgb(245, 237, 206)");
     await page("Network.enable");
     await page("Network.setBlockedURLs", { urls: ["*/_next/static/chunks/*.js*", "*/_next/static/chunks/**/*.js*"] });

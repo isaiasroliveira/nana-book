@@ -33,6 +33,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Keep older diary responses from overwriting refreshed readings, and prevent an open review from being saved under a switched account.
+
 - Apply the saved appearance before the page first renders to prevent a theme flash.
 
 - Keep the landing illustration visible behind the header across appearance palettes.
@@ -47,6 +49,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Avoid a browser global name collision that prevented prototype layouts from rendering.
 
 ### Added
+
+- Add Neon Auth sign-up, sign-in, session restoration and sign-out for private reading diaries.
+- Save half-star ratings, optional opinions and spoiler markers; revise evaluations without duplicates.
+- Add normalized PostgreSQL persistence with ownership constraints, atomic saves and stable diary pagination.
+- Verify private reviews through browser flows, real Neon Auth and isolated PostgreSQL integration tests.
 
 - Offer a persistent light mode for the original yellow reading theme.
 
