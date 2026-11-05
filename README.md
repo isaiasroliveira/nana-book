@@ -1,10 +1,41 @@
-# Nana Book
+<p align="center">
+  <img src="public/icons/nana-book-192.png" alt="Nana Book app icon" width="128">
+</p>
 
-A mobile-first reading journal built with Next.js and TypeScript. Readers can sign in, select a book edition and save private half-star ratings, opinions and spoiler markers. Signed-out visitors see a clearly marked demonstration diary.
+<h1 align="center">Nana Book</h1>
 
-## Development
+<p align="center">A reading journal for the books that stay with you.</p>
 
-Use the Node.js version in `.nvmrc` and the pnpm version in `package.json`.
+<p align="center">
+  <a href="#features">Features</a> ·
+  <a href="#getting-started">Getting started</a> ·
+  <a href="#tests">Tests</a> ·
+  <a href="#documentation">Documentation</a>
+</p>
+
+Search for a book, choose the edition you read, and save your rating and opinion in a private diary. Nana Book is designed for mobile and works on desktop too.
+
+## A look inside
+
+The demonstration diary on desktop and mobile:
+
+<p align="center">
+  <img src="docs/images/diary-desktop.png" alt="Desktop view of the Nana Book demonstration diary" width="700">
+  <img src="docs/images/diary-mobile.png" alt="Mobile view of the Nana Book demonstration diary" width="195">
+</p>
+
+## Features
+
+- Find editions by title, author or ISBN using Google Books.
+- Save private ratings in half-star increments, add an optional opinion and mark spoilers.
+- Edit or delete evaluations and revisit your reading diary across devices.
+- Personalize the app's appearance and install it on your home screen.
+
+Built with Next.js, TypeScript, Neon Auth and PostgreSQL.
+
+## Getting started
+
+Use the Node.js version in `.nvmrc` and the pnpm version in `package.json`. To run the app locally:
 
 ```sh
 fnm install
@@ -13,7 +44,9 @@ npx --yes pnpm@12.14.0 install
 npx --yes pnpm@12.14.0 dev
 ```
 
-Open http://localhost:3000. Run `pnpm verify` before submitting application changes. If the shell still reports an old Node.js version, run `eval "$(fnm env)"` before `fnm use`. The explicit npx commands avoid older Corepack versions that incorrectly look for `bin/pnpm.cjs` in pnpm 12.
+Open http://localhost:3000 to explore the demonstration diary. To enable private diaries and book search, configure the services described in [Private diary setup](#private-diary-setup) and [Experimental book search](#experimental-book-search).
+
+Run `pnpm verify` before submitting application changes. If the shell still reports an old Node.js version, run `eval "$(fnm env)"` before `fnm use`. The explicit npx commands avoid older Corepack versions that incorrectly look for `bin/pnpm.cjs` in pnpm 12.
 
 Direct dependency versions are pinned. Use `pnpm install --frozen-lockfile` for automated installations.
 
