@@ -7,13 +7,18 @@
 <p align="center">A reading journal for the books that stay with you.</p>
 
 <p align="center">
+  <a href="https://nanabook.vercel.app/">Open Nana Book</a> ·
   <a href="#features">Features</a> ·
-  <a href="#getting-started">Getting started</a> ·
+  <a href="#local-development">Local development</a> ·
   <a href="#tests">Tests</a> ·
   <a href="#documentation">Documentation</a>
 </p>
 
 Search for a book, choose the edition you read, and save your rating and opinion in a private diary. Nana Book is designed for mobile and works on desktop too.
+
+**Work in progress:** Nana Book is under active development. Features and the experience may change.
+
+Try it at [nanabook.vercel.app](https://nanabook.vercel.app/).
 
 ## A look inside
 
@@ -33,9 +38,9 @@ The demonstration diary on desktop and mobile:
 
 Built with Next.js, TypeScript, Neon Auth and PostgreSQL.
 
-## Getting started
+## Local development
 
-Use the Node.js version in `.nvmrc` and the pnpm version in `package.json`. To run the app locally:
+To work on the project locally, use the Node.js version in `.nvmrc` and the pnpm version in `package.json`:
 
 ```sh
 fnm install
@@ -44,7 +49,7 @@ npx --yes pnpm@12.14.0 install
 npx --yes pnpm@12.14.0 dev
 ```
 
-Open http://localhost:3000 to explore the demonstration diary. To enable private diaries and book search, configure the services described in [Private diary setup](#private-diary-setup) and [Experimental book search](#experimental-book-search).
+Open http://localhost:3000. To enable private diaries and book search locally, configure the services described in [Private diary setup](#private-diary-setup) and [Experimental book search](#experimental-book-search).
 
 Run `pnpm verify` before submitting application changes. If the shell still reports an old Node.js version, run `eval "$(fnm env)"` before `fnm use`. The explicit npx commands avoid older Corepack versions that incorrectly look for `bin/pnpm.cjs` in pnpm 12.
 
