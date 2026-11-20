@@ -82,9 +82,10 @@ test("ISBN search preserves the edition identifier", async (context) => {
 
 test("search fails safely if the API key is missing", async (context) => {
   delete process.env.GOOGLE_BOOKS_API_KEY;
-  context.mock.method(globalThis, "fetch", async () => { assert.fail("Missing credentials must not reach the provider"); });
+  const fetch = context.mock.method(globalThis, "fetch", async () => Response.json({}));
   const response = await GET(new Request("http://localhost/api/books?q=livro"));
   assert.equal(response.status, 502);
+  assert.equal(fetch.mock.callCount(), 0);
 });
 
  test("search exposes HTTPS cover images and ignores unsafe image URLs", async (context) => {

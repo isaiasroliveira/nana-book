@@ -10,9 +10,10 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "verify": "pnpm test && pnpm typecheck && pnpm build",
+    "verify": "pnpm check:file-size && pnpm test && pnpm typecheck && pnpm build",
+    "check:file-size": "node scripts/check-file-size.mjs",
     "test": "tsx --test tests/*.test.tsx",
-    "test:browser": "node --test --test-timeout=45000 tests/browser/*.test.mjs",
+    "test:browser": "node --test --test-concurrency=1 --test-timeout=120000 tests/browser/*.test.mjs",
     "test:integration": "node --test tests/integration/*.test.mjs",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs"
   },
@@ -26,7 +27,7 @@
     "cn": "^0.5.1",
     "lucide-react": "1.63.0",
     "motion": "^14.9.0",
-    "next": "16.4.3",
+    "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

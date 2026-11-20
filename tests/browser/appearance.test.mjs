@@ -4,10 +4,12 @@ import { spawn } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { existsSync } from "node:fs";
+import { chromium } from "@playwright/test";
 
 test("appearance supports keyboard focus, selection, persistence and reset", async () => {
   const profile = await mkdtemp(join(tmpdir(), "nana-browser-"));
-  const chrome = spawn(process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", [
+  const chrome = spawn(process.env.CHROME_PATH || (existsSync(chromium.executablePath()) ? chromium.executablePath() : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"), [
     "--headless=new", "--no-first-run", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "about:blank",
   ], { stdio: ["ignore", "ignore", "pipe"] });
   let socket;
@@ -59,6 +61,11 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await page("Page.navigate", { url: process.env.TEST_BASE_URL || "http://localhost:3000" });
     await waitFor("!!document.querySelector('summary')");
     await waitFor("!!document.querySelector('.featured-cover img[alt]')");
+    const readingsPosition = await evaluate("(() => { const r = document.querySelector('.nav a[href=\"#readings\"]').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()");
+    await page("Input.dispatchMouseEvent", { type: "mouseMoved", ...readingsPosition });
+    await waitFor("document.querySelector('.nav a[href=\"#readings\"]').hasAttribute('data-fluid-hover-active')");
+    await waitFor("!!document.querySelector('[data-slot=fluid-hover-highlight]')");
+    assert.notEqual(await evaluate("getComputedStyle(document.querySelector('[data-slot=fluid-hover-highlight]')).backgroundColor"), "rgba(0, 0, 0, 0)", "hover highlight has a visible background");
     await evaluate("document.querySelector('.nav a[href=\"#readings\"]').click()");
     await waitFor("document.querySelector('.nav a[href=\"#readings\"]').getAttribute('aria-current') === 'location'");
     assert.equal(await evaluate("document.querySelector('.nav a[href=\"#readings\"]').textContent.trim()"), "Leituras");
@@ -133,6 +140,14 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     await page("Page.reload");
     await waitFor("document.documentElement?.dataset.mode === 'light'");
     assert.equal(await evaluate("getComputedStyle(document.body).backgroundColor"), "rgb(255, 255, 255)");
+    await evaluate("localStorage.setItem('nana-appearance', JSON.stringify({ palette: 'rose', mode: 'dark' }))");
+    await page("Page.reload");
+    await waitFor("document.documentElement?.dataset.palette === 'rose' && document.documentElement.dataset.mode === 'dark'");
+    await evaluate("localStorage.setItem('nana-appearance', JSON.stringify({ palette: 'unknown', mode: 'light' }))");
+    await page("Page.reload");
+    await waitFor("document.readyState === 'complete'");
+    assert.equal(await evaluate("document.documentElement.hasAttribute('data-palette') || document.documentElement.hasAttribute('data-mode')"), false);
+    await evaluate("localStorage.setItem('nana-appearance', JSON.stringify({ palette: '', mode: 'light' }))");
     await page("Network.setBlockedURLs", { urls: [] });
     await page("Page.reload");
     await waitFor("document.documentElement?.dataset.mode === 'light'");
@@ -149,8 +164,11 @@ test("appearance supports keyboard focus, selection, persistence and reset", asy
     assert.equal(await evaluate("document.querySelector('button').getBoundingClientRect().height >= 48"), true);
   } finally {
     socket?.close();
-    chrome.kill();
-    await new Promise(resolve => chrome.once("exit", resolve));
+    if (chrome.pid && chrome.exitCode === null && chrome.signalCode === null) {
+      const exited = new Promise(resolve => chrome.once("exit", resolve));
+      chrome.kill();
+      await exited;
+    }
     await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   }
 });

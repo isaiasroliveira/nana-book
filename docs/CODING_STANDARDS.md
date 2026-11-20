@@ -7,6 +7,7 @@ Use judgment: assess the benefit and cost of a rule in its context rather than a
 - Prefer readable, simple, correct and maintainable solutions. Follow existing conventions where appropriate.
 - Write identifiers, code comments and documentation in English. Reader-facing text may be in Portuguese.
 - Keep functions and modules cohesive. Prefer pure functions where appropriate and make side effects explicit.
+- Keep maintained text files at or below 500 lines. Generated files, dependency lockfiles and vendored third-party code are excluded.
 - Share duplicated logic when a clear, useful abstraction exists. Avoid speculative layers, dependencies, configuration and generalization.
 - Preserve compatibility and behavior during refactoring unless a change is intentional. Keep changes within scope.
 
