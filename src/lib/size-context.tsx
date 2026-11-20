@@ -123,13 +123,11 @@ interface SizeContextValue {
 
 const SizeContext = createContext<SizeContextValue | null>(null);
 
-/** Resolve the active size variant: explicit prop > provider > "default". */
 function useSizeVariant(override?: SizeVariant | null): SizeVariant {
   const ctx = useContext(SizeContext);
   return override ?? ctx?.size ?? "default";
 }
 
-/** Resolve size classes: explicit prop > provider > "default". */
 function useSize(override?: SizeVariant | null): SizeClasses {
   return sizeMap[useSizeVariant(override)];
 }

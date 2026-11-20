@@ -4,11 +4,13 @@ import { spawn } from "node:child_process";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { existsSync } from "node:fs";
+import { chromium } from "@playwright/test";
 
 // Only the reader interface is under test here; server/database tests exercise real persistence.
 test("reader saves and restores half-star ratings, then revises an opinion without duplicates", async t => {
   const profile = await mkdtemp(join(tmpdir(), "nana-reviews-browser-"));
-  const chrome = spawn(process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", [
+  const chrome = spawn(process.env.CHROME_PATH || (existsSync(chromium.executablePath()) ? chromium.executablePath() : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"), [
     "--headless=new", "--no-first-run", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "about:blank",
   ], { stdio: ["ignore", "ignore", "pipe"] });
   let socket;
@@ -267,8 +269,11 @@ test("reader saves and restores half-star ratings, then revises an opinion witho
 
   } finally {
     socket?.close();
-    chrome.kill();
-    if (chrome.exitCode === null) await new Promise(resolve => chrome.once("exit", resolve));
+    if (chrome.pid && chrome.exitCode === null && chrome.signalCode === null) {
+      const exited = new Promise(resolve => chrome.once("exit", resolve));
+      chrome.kill();
+      await exited;
+    }
     await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   }
 });

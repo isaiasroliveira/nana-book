@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Document and check a 500-line limit for maintained text files.
+
 - Use the Nana Book app artwork for browser installation and iPhone home-screen icons.
 
 - Add a password recovery flow through Neon Auth.
@@ -42,6 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Organize shared styles and hover geometry into smaller modules, and keep appearance preference values consistent during startup.
 - Present reading impressions as open editorial text beside the book, improve text hierarchy and spacing, and reduce decorative shadows.
 - Extend shared Fluid Functionalism buttons and loading states to account, password recovery, review saving and diary pagination; align form fields and appearance touch targets.
 - Adopt Tailwind CSS, shadcn/ui and Fluid Functionalism for search controls and navigation hover, with reduced motion support.
@@ -79,6 +82,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Removed
 
 - Remove temporary layout prototypes after approval of the diary direction.
+
+### Security
+
+- Update Next.js to 16.4.6 to address a published security advisory.
 
 ### Fixed
 

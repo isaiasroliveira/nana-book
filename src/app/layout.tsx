@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { MotionProvider } from "@/components/motion-provider";
+import { appearanceModes, appearancePalettes, appearanceStorageKey } from "@/services/appearance";
 import "./globals.css";
+import "./base-layout.css";
+import "./reading-desk.css";
 import "./appearance.css";
 
 export const metadata: Metadata = {
@@ -15,8 +18,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return <html lang="pt-BR" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: `try {
-    const saved = JSON.parse(localStorage.getItem("nana-appearance") || "null");
-    if (["", "petrol", "sage", "rose"].includes(saved?.palette) && ["light", "dark"].includes(saved?.mode)) {
+    const saved = JSON.parse(localStorage.getItem(${JSON.stringify(appearanceStorageKey)}) || "null");
+    if (${JSON.stringify(appearancePalettes)}.includes(saved?.palette) && ${JSON.stringify(appearanceModes)}.includes(saved?.mode)) {
       if (saved.palette) document.documentElement.dataset.palette = saved.palette;
       document.documentElement.dataset.mode = saved.mode;
     }
